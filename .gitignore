@@ -1,0 +1,11 @@
+*.json
+.DS_Store
+ssl_cert
+vault_auth_token
+terraform.tfvars
+terraform-init
+terraform.tfstate.backup
+terraform.tfstate
+.terraform/
+.vscode/
+secrets/
