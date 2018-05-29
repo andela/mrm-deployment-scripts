@@ -1,0 +1,46 @@
+{
+  "variables": {
+    "streamer_password": "{{env `STREAMER_PASSWORD`}}",
+    "db_password": "{{env `DB_PASSWORD`}}",
+    "project_id": "{{env `PROJECT_ID`}}"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "{{ user `gcloud_account_file` }}",
+      "project_id": "{{ user `project_id` }}",
+      "source_image": "ubuntu-1604-xenial-v20180109",
+      "zone": "europe-west1-b",
+      "ssh_username": "packer",
+      "image_name": "mrm-postgres-image"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./provisioner.sh",
+      "destination": "/tmp/provisioner.sh"
+    },
+    {
+      "type": "file",
+      "source": "../../../secrets/postgres_rsa",
+      "destination": "/tmp/postgres_rsa"
+    },
+    {
+      "type": "file",
+      "source": "../../../secrets/postgres_rsa.pub",
+      "destination": "/tmp/postgres_rsa.pub"
+    },
+    {
+      "type": "file",
+      "source": "../../../secrets/barman_rsa.pub",
+      "destination": "/tmp/barman_rsa.pub"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "/bin/bash /tmp/provisioner.sh {{ user `db_password` }} {{ user `streamer_password` }}"
+      ]
+    }
+  ]
+}
