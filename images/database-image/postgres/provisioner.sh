@@ -15,7 +15,16 @@ function create_barman_user {
   sudo -u postgres psql -c "ALTER USER postgres WITH encrypted password '$1'"
   sudo -u postgres psql -c "CREATE ROLE barmanstreamer WITH REPLICATION SUPERUSER PASSWORD '$2' LOGIN"
 }
-
+function enable_logging {
+  echo "log_destination = 'syslog,csvlog'" | sudo tee --append $CONF_FILE
+  echo "log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'" | sudo tee --append $CONF_FILE
+  echo "log_duration = on" | sudo tee --append $CONF_FILE
+  echo "log_statement = 'none'" | sudo tee --append $CONF_FILE
+  echo "log_min_duration_statement = 2000" | sudo tee --append $CONF_FILE
+  echo "client_min_messages = notice" | sudo tee --append $CONF_FILE
+  echo "log_min_messages = warning" | sudo tee --append $CONF_FILE
+  echo "log_min_error_statement = error" | sudo tee --append $CONF_FILE
+}
 function get_postgres_version {
   echo $(ls /etc/postgresql)
 }
@@ -79,11 +88,12 @@ function main {
   copy_keys
   create_barman_user $1 $2
   allow_barman_streamer_access
+  enable_logging
   enable_WAL
   enable_external_connections
   allow_external_connection
   start_postgres_onboot
   echo "--- Restarting postgresql ---"
-  sudo systemctl restart postgresql
+  sudo systemctl restart postgresqls
 }
 main $1 $2
