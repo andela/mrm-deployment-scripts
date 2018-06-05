@@ -16,8 +16,6 @@ function create_barman_user {
   sudo -u postgres psql -c "CREATE ROLE barmanstreamer WITH REPLICATION SUPERUSER PASSWORD '$2' LOGIN"
 }
 function enable_logging {
-  echo "log_destination = 'syslog,csvlog'" | sudo tee --append $CONF_FILE
-  echo "log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'" | sudo tee --append $CONF_FILE
   echo "log_duration = on" | sudo tee --append $CONF_FILE
   echo "log_statement = 'none'" | sudo tee --append $CONF_FILE
   echo "log_min_duration_statement = 2000" | sudo tee --append $CONF_FILE
@@ -41,7 +39,32 @@ function enable_WAL {
   echo "max_replication_slots = 2" | sudo tee --append $CONF_FILE
 
 }
+function install_config_filebeats {
+  echo "---Upgrading Filebeat and metricbeats---"
 
+  wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+  sudo apt-get -y install apt-transport-https
+  echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list
+  sudo apt-get update
+  sudo apt-get install -y filebeat metricbeat
+  sudo update-rc.d filebeat defaults 95 10
+  sudo mkdir -p /etc/pki/tls/certs
+  sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
+  sudo mv /etc/filebeat/filebeat.yml /etc/filebeat/filebeat.old.yml
+  sudo cp /tmp/filebeat-config.yml /etc/filebeat/filebeat.yml
+  sudo filebeat modules enable postgresql system
+  echo "---Restarting filebeat---"
+
+  sudo service filebeat restart
+  sudo update-rc.d filebeat defaults 95 10
+}
+function config_metricbeats {
+  sudo mv /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.old.yml
+  sudo cp /tmp/metricbeat-config.yml /etc/metricbeat/metricbeat.yml
+  sudo metricbeat modules enable system postgresql
+  sudo service metricbeat restart
+  sudo update-rc.d metricbeat defaults 95 10
+}
 function start_postgres_onboot {
   sudo systemctl enable postgresql
 }
@@ -94,6 +117,8 @@ function main {
   allow_external_connection
   start_postgres_onboot
   echo "--- Restarting postgresql ---"
-  sudo systemctl restart postgresqls
+  sudo systemctl restart postgresql
+  install_config_filebeats
+  config_metricbeats
 }
 main $1 $2
