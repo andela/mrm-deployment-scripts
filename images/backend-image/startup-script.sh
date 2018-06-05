@@ -37,7 +37,9 @@ function install_project_dependencies {
   pip install -r requirements.txt
 
 }
-
+function count_versions {
+  echo $(find alembic/versions/*.py | wc -l)
+}
 function retrieve_env_variables {
   echo "---Retrieving env variables---"
   curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_env -H "Metadata-Flavor: Google" > .env
@@ -70,9 +72,21 @@ function setup_env_variables {
 }
 function run_migration {
   echo "---Running db migrations---"
-  alembic stamp head
-  alembic revision --autogenerate
-  alembic upgrade head
+  if [ -d "alembic/versions" ]; then
+    if [ "$(count_versions)" -eq 0 ]; then
+      alembic revision --autogenerate
+    elif [ "$(count_versions)" -gt 0 ] && [ "$(count_versions)" -lt 2 ]; then
+      alembic stamp head
+    elif [ "$(count_versions)" -gt 2 ]; then
+      alembic stamp head
+      alembic upgrade head
+      alembic revision --autogenerate
+    fi
+
+    alembic upgrade head
+  fi
+
+
 }
 function run_application {
   sudo supervisorctl reread
@@ -88,6 +102,8 @@ function install_other_dependencies {
   pip install gunicorn
   pip install gevent
 }
+
+
 function main {
   login_vault
   create_repo_key
@@ -99,5 +115,8 @@ function main {
   setup_env_variables
   run_migration
   run_application
+  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
+  sudo metricbeat setup
+
 }
 main "$@"
