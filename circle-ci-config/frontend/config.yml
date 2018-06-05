@@ -1,0 +1,83 @@
+# Javascript Node CircleCI 2.0 configuration file
+
+version: 2
+jobs:
+  build:
+    docker:
+      # Node versions used
+      - image: circleci/node:8.9
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # Fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: Installing Packages
+          command: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+          name: CodeClimate test reported Setup
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: Running Linter
+          command: yarn lint
+
+      - run:
+          name: Code Climate Pretest
+          command: ./cc-test-reporter before-build
+
+      - run:
+         name: Running Tests with Coverage
+         command: yarn test:coveralls
+
+      - run:
+         name: Reporting Coverage to CodeClimate
+         command: ./cc-test-reporter after-build --exit-code $EXIT_CODE
+
+  deploy-job:
+    docker:
+      - image: google/cloud-sdk
+        environment:
+          GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/gcloud-service-key.json
+          GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
+          GOOGLE_COMPUTE_ZONE: ${GOOGLE_COMPUTE_ZONE}
+    steps:
+      - run:
+          name: Store Service Account Key into file
+          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+      - run:
+          name: Authenticate on gcloud
+          command: |
+            gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      - run:
+          name: Deploy to gcloud
+          command: gcloud beta compute instance-groups managed rolling-action replace mrm-frontend-instance-group	 --max-unavailable=1 --min-ready=280 --zone=europe-west1-b
+
+workflows:
+  version: 2
+  build-then-deploy:
+    jobs:
+      - build
+      - deploy-job:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop

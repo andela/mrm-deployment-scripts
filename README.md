@@ -1,10 +1,10 @@
 # Andela MRM Infrastructure
 
-### Introduction
+## Introduction
 
-### Table of Content
+## Table of Content
 
-### Technology Used
+## Technology Used
 
 - [Terraform](https://www.terraform.io/)
 
@@ -16,11 +16,22 @@
 
 - [Barman](http://www.pgbarman.org/)
 
-### Before you begin
+- [CircleCI](https://circleci.com/)
 
-It is important that you create a service account on GCP and download the crediential file in json format
+- [Nginx](https://www.nginx.com/)
 
-### Contributors
+- [ELK](https://www.elastic.co/)
+>- [Elasticsearch](https://www.elastic.co/products/elasticsearch)
+>- [Kibana](https://www.elastic.co/products/kibana)
+>- [Logstash](https://www.elastic.co/products/logstash)
+>- [Metricbeat](https://www.elastic.co/products/beats/metricbeat)
+>- [Filebeat](https://www.elastic.co/products/beats/filebeat)
+
+## Before you begin
+
+It is important that you [create a service account on GCP](docs/service-account-creation) and download the crediential file in json format
+
+## Contributors
 
 - [Fidelis Ojeah](https://github.com/fidelisojeah)
 
