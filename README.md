@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![Infrastructure Image](docs/images/GCP-architecture.png)
+
 ## Table of Content
 
 ## Technology Used
