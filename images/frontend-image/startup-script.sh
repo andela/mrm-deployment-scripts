@@ -46,6 +46,18 @@ function retrieve_repo_key {
   chmod 600 $HOME/.ssh/id_rsa
 
 }
+function start_services {
+    echo "---setting up Beats---"
+
+  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
+  sudo metricbeat setup
+    echo "---Starting metricbeat---"
+  sudo service metricbeat start
+    echo "---Starting filebeat---"
+  sudo service filebeat start
+    echo "---reStarting NGINX---"
+  sudo systemctl restart nginx
+}
 function main {
   export NODE_ENV=production
   login_vault
@@ -53,7 +65,6 @@ function main {
   clone_repo
   install_dependencies
   build_project
-  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
-  sudo metricbeat setup
+  start_services
 }
 main

@@ -26,6 +26,7 @@ function install_nginx {
   echo "---Installing NGINX---"
   sudo apt-get install nginx -y
   sudo systemctl start nginx
+  sudo systemctl enable nginx
 }
 function setup_nginx {
   echo "---Setting up NGINX---"
@@ -83,6 +84,8 @@ function main {
   setup_vault
   install_config_filebeats
   config_metricbeats
+  sudo service metricbeat start
+  sudo service filebeat start
 }
 
 main
