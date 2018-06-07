@@ -9,7 +9,9 @@ To update or edit images
 
 ## For Packer Images
 
+
 - Duplicate the `template`.json.tmpl file and rename (removing the .tmpl extension)
+
 - Modify the packer template file and run the command
 >- `packer build template-file.json`
 

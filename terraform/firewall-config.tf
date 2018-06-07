@@ -10,6 +10,19 @@ resource "google_compute_firewall" "firewall-allow-icmp-internal" {
   source_ranges = ["192.168.0.0/16"]
 }
 
+resource "google_compute_firewall" "firewall-allow-logstash-elastic-internal" {
+  name        = "${var.platform-name}-allow-logstash-internal"
+  description = "Allow Connection between instances and logstash and elasticsearch on network"
+  network     = "${google_compute_network.vpc.self_link}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["5044", "9200"]
+  }
+
+  source_ranges = ["192.168.0.0/16"]
+}
+
 resource "google_compute_firewall" "firewall-ssh-internal" {
   name        = "${var.platform-name}-allow-ssh-internal"
   description = "Allow ssh between instances on the network"
