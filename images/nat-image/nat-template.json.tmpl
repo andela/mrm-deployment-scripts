@@ -1,0 +1,19 @@
+{
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "{{ user `gcloud_account_file` }}",
+      "project_id": "{{ user `project_id` }}",
+      "source_image": "ubuntu-1604-xenial-v20180109",
+      "zone": "europe-west1-b",
+      "ssh_username": "packer",
+      "image_name": "mrm-nat-gateway-image"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "./nat-config.sh"
+    }
+  ]
+}

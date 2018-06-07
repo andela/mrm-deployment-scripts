@@ -9,6 +9,9 @@ To update or edit images
 
 ## For Packer Images
 
+
+- Duplicate the `template`.json.tmpl file and rename (removing the .tmpl extension)
+
 - Modify the packer template file and run the command
 >- `packer build template-file.json`
 
@@ -34,4 +37,3 @@ This could be done by running the following command
 `docker login -u _json_key --password-stdin https://gcr.io < keyfile.json`
 
 Here, `keyfile.json` is a google service account file
-
