@@ -51,6 +51,35 @@ resource "google_compute_instance" "nat-gateway-instance" {
   }
 }
 
+resource "google_compute_instance" "mrm-elk-server" {
+  name         = "${var.platform-name}-elk-server"
+  description  = "mrm ELK monitoring server"
+  machine_type = "n1-standard-2"
+  zone         = "${var.gcloud-zone}"
+
+  boot_disk {
+    initialize_params {
+      image = "${var.platform-name}-elk-image"
+      size  = "100"
+    }
+  }
+
+  network_interface {
+    subnetwork = "${google_compute_subnetwork.public-subnet.self_link}"
+    address    = "${google_compute_address.ip-static-elk.address}"
+
+    access_config {
+      nat_ip = "${google_compute_address.ip-ep-elk.address}"
+    }
+  }
+
+  tags = ["elk-server", "public", "http-server", "https-server"]
+
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+}
+
 resource "google_compute_instance" "mrm-postgresql-instance" {
   name         = "${var.platform-name}-postgresql-server"
   description  = "System Database"
