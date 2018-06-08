@@ -1,0 +1,61 @@
+{
+  "variables": {
+    "db_password": "{{env `DB_PASSWORD`}}",
+    "api_secret_key": "{{env `API_SECRET_KEY`}}",
+    "project_id": "{{env `PROJECT_ID`}}"
+  },
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "{{ user `gcloud_account_file` }}",
+      "project_id": "{{ user `project_id` }}",
+      "source_image": "ubuntu-1604-xenial-v20180109",
+      "zone": "europe-west1-b",
+      "ssh_username": "packer",
+      "image_name": "mrm-vault-image"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./vault-provisioner.sh",
+      "destination": "/tmp/provisioner.sh"
+    },
+    {
+      "type": "file",
+      "source": "./renew-token",
+      "destination": "/tmp/renew-token"
+    },
+    {
+      "type": "file",
+      "source": "../../secrets/github_key_private",
+      "destination": "/tmp/github_key_private"
+    },
+    {
+      "type": "file",
+      "source": "../../secrets/github_key_private.pub",
+      "destination": "/tmp/github_key_private.pub"
+    },
+    {
+      "type": "file",
+      "source": "./mrm-vault-policy.hcl",
+      "destination": "/home/packer/mrm-vault-policy.hcl"
+    },
+    {
+      "type": "file",
+      "source": "./mrm-vault-config-file.hcl",
+      "destination": "/home/packer/mrm-vault-config-file.hcl"
+    },
+    {
+      "type": "file",
+      "source": "./startup-script.sh",
+      "destination": "/home/packer/startup-script.sh"
+    },
+     {
+      "type": "shell",
+      "inline": [
+        "/bin/bash /tmp/provisioner.sh {{ user `db_password` }} {{ user `api_secret_key` }}"
+      ]
+    }
+  ]
+}

@@ -39,6 +39,7 @@ variable "static_ips" {
   type = "map"
 
   default = {
+    elk-server      = "192.168.200.104"
     vault-server    = "192.168.13.101"
     postgres-server = "192.168.13.130"
     barman-server   = "192.168.13.201"

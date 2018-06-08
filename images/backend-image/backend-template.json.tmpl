@@ -1,0 +1,39 @@
+{
+  "builders": [
+    {
+      "type": "googlecompute",
+     "account_file": "{{ user `gcloud_account_file` }}",
+      "project_id": "{{ user `project_id` }}",
+      "source_image": "ubuntu-1604-xenial-v20180109",
+      "zone": "europe-west1-b",
+      "ssh_username": "packer",
+      "image_name": "mrm-backend-packer-image"
+    }
+  ],
+"provisioners": [
+    {
+      "type": "file",
+      "source": "../shared/filebeat-config.yml",
+      "destination": "/tmp/filebeat-config.yml"
+    },
+    {
+      "type": "file",
+      "source": "../shared/metricbeat-config.yml",
+      "destination": "/tmp/metricbeat-config.yml"
+    },
+    {
+      "type": "file",
+      "source": "../../secrets/logstash-forwarder.crt",
+      "destination": "/tmp/logstash-forwarder.crt"
+    },
+    {
+      "type": "file",
+      "source": "./startup-script.sh",
+      "destination": "/tmp/startup-script.sh"
+    },
+    {
+      "type": "shell",
+      "script": "./provisioner.sh"
+    }
+  ]
+}
