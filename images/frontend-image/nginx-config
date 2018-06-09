@@ -1,0 +1,59 @@
+##
+
+# Default server configuration
+#
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  root /home/packer/mrm_front/dist;
+
+  # Add index.php to the list if you are using PHP
+  index index.html index.htm;
+
+  server_name _;
+
+  location /server-status {
+    stub_status on;
+
+    access_log off;
+    allow 127.0.0.1;
+    deny all;
+  }
+  location /health-check {
+    try_files $uri /index.html;
+    access_log off;
+    keepalive_requests 0;
+  }
+  location / {
+    try_files $uri /index.html;
+  }
+  # Do not cache sw.js, required for offline-first updates.
+  location /sw.js {
+      add_header Cache-Control "no-cache";
+      proxy_cache_bypass $http_pragma;
+      proxy_cache_revalidate on;
+      expires off;
+      access_log off;
+  }
+}
+
+
+# Virtual Host configuration for example.com
+#
+# You can move that to a different file under sites-available/ and symlink that
+# to sites-enabled/ to enable it.
+#
+#server {
+#       listen 80;
+#       listen [::]:80;
+#
+#       server_name example.com;
+#
+#       root /home/packer/mrm_front/dist;
+#       index index.html;
+#
+#       location / {
+#              try_files $uri index.html;
+#       }
+#}
