@@ -1,8 +1,21 @@
-resource "google_compute_autoscaler" "frontend-autoscaler" {
-  name = "${var.platform-name}-frontend-autoscaler"
-  zone = "${var.gcloud-zone}"
+resource "google_compute_health_check" "frontend-health-check" {
+  name                = "${var.platform-name}-frontend-autohealing-health-check"
+  check_interval_sec  = 70
+  timeout_sec         = 20
+  healthy_threshold   = 2
+  unhealthy_threshold = 10                                                       # 50 seconds
 
-  target = "${google_compute_instance_group_manager.frontend-instance-group.self_link}"
+  http_health_check {
+    request_path = "/health-check"
+    port         = "80"
+  }
+}
+
+resource "google_compute_region_autoscaler" "frontend-autoscaler" {
+  name   = "${var.platform-name}-frontend-autoscaler"
+  region = "${var.gcloud-region}"
+
+  target = "${google_compute_region_instance_group_manager.frontend-instance-group.self_link}"
 
   autoscaling_policy = {
     max_replicas    = 4
@@ -15,11 +28,11 @@ resource "google_compute_autoscaler" "frontend-autoscaler" {
   }
 }
 
-resource "google_compute_instance_group_manager" "frontend-instance-group" {
+resource "google_compute_region_instance_group_manager" "frontend-instance-group" {
   name               = "${var.platform-name}-frontend-instance-group"
   base_instance_name = "${var.platform-name}-frontend-instance-group"
   instance_template  = "${google_compute_instance_template.frontend-template.self_link}"
-  zone               = "${var.gcloud-zone}"
+  region             = "${var.gcloud-region}"
 
   named_port {
     name = "http"
@@ -29,7 +42,7 @@ resource "google_compute_instance_group_manager" "frontend-instance-group" {
   depends_on = ["google_compute_instance.mrm-vault-server-instance"]
 
   auto_healing_policies {
-    health_check      = ""
+    health_check      = "${google_compute_health_check.frontend-health-check.self_link}"
     initial_delay_sec = 300
   }
 }
@@ -45,13 +58,13 @@ module "gce_lb_http_fe" {
   backends = {
     "0" = [
       {
-        group = "${google_compute_instance_group_manager.frontend-instance-group.instance_group}"
+        group = "${google_compute_region_instance_group_manager.frontend-instance-group.instance_group}"
       },
     ]
   }
 
   backend_params = [
-    "/,http,80,15",
+    "/health-check,http,80,15",
   ]
 
   private_key = "${file("../secrets/star_andela_key.pem")}"
