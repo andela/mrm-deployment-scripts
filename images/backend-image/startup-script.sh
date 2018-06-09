@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env bash
 
 function create_repo_key {
   if [ ! -d $HOME/.ssh ]; then
@@ -28,7 +28,24 @@ function login_vault {
 }
 function clone_repo {
   echo "---cloning repo---"
-  git clone git@github.com:andela/mrm_api.git
+  n=0
+  EXIT_CODE=1
+  until [ $n -ge 4 ]
+  do
+    [[ -d mrm_api ]] && EXIT_CODE=0 && break
+    git clone git@github.com:andela/mrm_api.git
+
+    if [ $? -eq 128 ]; then
+      EXIT_CODE=128
+      echo "Unable to clone Repo (Permission Denied)"
+      break
+    fi
+
+    n=$[$n+1]
+    sleep 15
+  done
+  [[ ! -d mrm_api ]] && $(exit-on-failure) && break
+  echo ">>>Cloning Successful---"
 }
 function install_project_dependencies {
   echo "---Installing dependencies---"
@@ -61,31 +78,40 @@ function setup_env_variables {
 
   if [ -s .env ]; then
     while read new_line || [[ -n $new_line ]]; do
-      printf "\t$new_line,\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+      if ! grep -q $new_line /etc/supervisor/conf.d/mrm_api.conf; then
+        printf "\t$new_line,\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+      fi
     done <.env
   fi
-  echo "---exporting env variables---"
-  printf "\tDATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
 
-  printf "\tDEV_DATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
-  printf "\tSECRET_KEY=\"$(retrieve_secret_key)\"\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+  echo "---exporting env variables---"
+  if ! grep -q DATABASE_URL /etc/supervisor/conf.d/mrm_api.conf; then
+    printf "\tDATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+    printf "\tDEV_DATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+  fi
+  if ! grep -q SECRET_KEY /etc/supervisor/conf.d/mrm_api.conf; then
+    printf "\tSECRET_KEY=\"$(retrieve_secret_key)\"\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+  fi
 }
 function run_migration {
+  export $(cat .env)
+  export DATABASE_URL="$(database_url)"
+  export DEV_DATABASE_URL="$(database_url)"
+  export SECRET_KEY="$(retrieve_secret_key)"
   echo "---Running db migrations---"
   if [ -d "alembic/versions" ]; then
     if [ "$(count_versions)" -eq 0 ]; then
-      alembic revision --autogenerate
+      /home/packer/venv/bin/alembic revision --autogenerate
     elif [ "$(count_versions)" -gt 0 ] && [ "$(count_versions)" -lt 2 ]; then
-      alembic stamp head
+      /home/packer/venv/bin/alembic stamp head
     elif [ "$(count_versions)" -gt 2 ]; then
-      alembic stamp head
-      alembic upgrade head
-      alembic revision --autogenerate
+      /home/packer/venv/bin/alembic stamp head
+      /home/packer/venv/bin/alembic upgrade head
+      /home/packer/venv/bin/alembic revision --autogenerate
     fi
 
-    alembic upgrade head
+    /home/packer/venv/bin/alembic upgrade head
   fi
-
 
 }
 function run_application {
@@ -102,8 +128,13 @@ function install_other_dependencies {
   pip install gunicorn
   pip install gevent
 }
-
-
+function exit-on-failure {
+  sudo bash /home/packer/slack.sh "Failure" ${HOSTNAME} ${EXIT_CODE}
+  exit $EXIT_CODE
+}
+function successful-startup {
+  sudo bash /home/packer/slack.sh "Success" ${HOSTNAME}
+}
 function main {
   login_vault
   create_repo_key
@@ -117,6 +148,9 @@ function main {
   run_application
   sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
   sudo metricbeat setup
-
+  sudo service metricbeat start
+  sudo service filebeat start
+  successful-startup
 }
+export HOSTNAME="mrm-backend-instance"
 main "$@"

@@ -13,6 +13,11 @@
 "provisioners": [
     {
       "type": "file",
+      "source": "../shared/slack.sh",
+      "destination": "/home/packer/slack.sh"
+    },
+    {
+      "type": "file",
       "source": "../shared/filebeat-config.yml",
       "destination": "/tmp/filebeat-config.yml"
     },
