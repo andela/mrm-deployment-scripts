@@ -2,21 +2,42 @@
 
 function clone_repo {
 
-  echo "---cloning repo---"
-  git clone git@github.com:andela/mrm_front.git
+echo "---cloning repo---"
+  n=0
+  EXIT_CODE=1
+  until [ $n -ge 4 ]
+  do
+    [[ -d mrm_front ]] && EXIT_CODE=0 && break
+    git clone git@github.com:andela/mrm_front.git
+    if [ $? -eq 128 ]; then
+      EXIT_CODE=128
+      echo "Unable to clone Repo (Permission Denied)"
+      break
+    fi
+
+    n=$[$n+1]
+    sleep 15
+  done
+  [[ ! -d mrm_front ]] && $(exit-on-failure) && break
+  echo ">>>Cloning Successful---"
+  . ~/.nvm/nvm.sh
 }
 function install_dependencies {
   echo "---Installing dependencies---"
 
+
+  nvm use node
   cd mrm_front
-  sudo yarn
+  yarn
   cd ..
 }
 function build_project {
   echo "---Installing dependencies---"
-  sudo npm install webpack -g --unsafe-perm
+
+  npm install webpack -g --unsafe-perm
   cd mrm_front
-  sudo yarn build
+  yarn build
+
   cd ..
 }
 function get_vault_address {
@@ -58,6 +79,15 @@ function start_services {
     echo "---reStarting NGINX---"
   sudo systemctl restart nginx
 }
+
+function exit-on-failure {
+  sudo bash /home/packer/slack.sh "Failure" ${HOSTNAME} ${EXIT_CODE}
+  exit $EXIT_CODE
+}
+function successful-startup {
+  sudo bash /home/packer/slack.sh "Success" ${HOSTNAME}
+}
+
 function main {
   export NODE_ENV=production
   login_vault
@@ -66,5 +96,7 @@ function main {
   install_dependencies
   build_project
   start_services
+  successful-startup
 }
-main
+export HOSTNAME="mrm-frontend-instance"
+main "$@"

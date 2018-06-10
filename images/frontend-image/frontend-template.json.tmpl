@@ -13,6 +13,11 @@
   "provisioners": [
     {
       "type": "file",
+      "source": "../shared/slack.sh",
+      "destination": "/home/packer/slack.sh"
+    },
+    {
+      "type": "file",
       "source": "../../secrets/logstash-forwarder.crt",
       "destination": "/tmp/logstash-forwarder.crt"
     },
