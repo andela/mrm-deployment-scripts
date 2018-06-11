@@ -72,7 +72,7 @@ function write_key_to_vault {
   cat /tmp/github_key_private.pub >> /home/packer/github_key_private.pub
   sudo chown vault:vault /home/packer/github_key_private.pub
   sudo chown vault:vault /home/packer/github_key_private
-  vault write mrm/keys mrm_token_verifier_pub_key=@/home/packer/github_key_private.pub mrm_repo_private_key=@/home/packer/github_key_private mrm_api_secret_key="$3"
+  vault write mrm/keys mrm_token_verifier_pub_key=@/home/packer/github_key_private.pub mrm_repo_private_key=@/home/packer/github_key_private mrm_api_secret_key="$1"
   echo ">>> Keys written to Vault Server ---"
 }
 function create_cron_job {
