@@ -12,7 +12,7 @@ server {
   index index.html index.htm;
 
   server_name _;
-
+  large_client_header_buffers 4 16k;
   location /server-status {
     stub_status on;
 
