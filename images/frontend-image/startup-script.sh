@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 function clone_repo {
-
 echo "---cloning repo---"
   n=0
   EXIT_CODE=1
@@ -22,9 +21,14 @@ echo "---cloning repo---"
   echo ">>>Cloning Successful---"
   . ~/.nvm/nvm.sh
 }
+function retrieve_env_variables {
+  cd ~/mrm_front
+  echo "---Retrieving env variables---"
+  curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_frontend_env -H "Metadata-Flavor: Google" > .env
+  cd ..
+}
 function install_dependencies {
   echo "---Installing dependencies---"
-
 
   nvm use node
   cd mrm_front
@@ -33,11 +37,9 @@ function install_dependencies {
 }
 function build_project {
   echo "---Installing dependencies---"
-
   npm install webpack -g --unsafe-perm
   cd mrm_front
   yarn build
-
   cd ..
 }
 function get_vault_address {
@@ -79,7 +81,6 @@ function start_services {
     echo "---reStarting NGINX---"
   sudo systemctl restart nginx
 }
-
 function exit-on-failure {
   sudo bash /home/packer/slack.sh "Failure" ${HOSTNAME} ${EXIT_CODE}
   exit $EXIT_CODE
@@ -87,13 +88,13 @@ function exit-on-failure {
 function successful-startup {
   sudo bash /home/packer/slack.sh "Success" ${HOSTNAME}
 }
-
 function main {
   export NODE_ENV=production
   login_vault
   retrieve_repo_key
   clone_repo
   install_dependencies
+  retrieve_env_variables
   build_project
   start_services
   successful-startup

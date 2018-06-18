@@ -44,6 +44,7 @@ function config_metricbeats {
   sudo mv /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.old.yml
   sudo cp /tmp/metricbeat-config.yml /etc/metricbeat/metricbeat.yml
   sudo metricbeat modules enable system
+  sudo sed -i -e 's/period: 10s/period: 100s/g' /etc/metricbeat/modules.d/system.yml
   sudo service metricbeat restart
   sudo update-rc.d metricbeat defaults 95 10
 }
