@@ -3,6 +3,7 @@
 ssl_cert
 vault_auth_token
 terraform/terraform.tfvars
+terraform/terraform
 terraform/terraform-init
 terraform/terraform.tfstate.backup
 terraform/terraform.tfstate
