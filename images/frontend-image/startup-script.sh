@@ -3,6 +3,7 @@
 function clone_repo {
 
 echo "---cloning repo---"
+  sudo chown -R packer /home/packer/.config
   n=0
   EXIT_CODE=1
   until [ $n -ge 4 ]
@@ -24,16 +25,13 @@ echo "---cloning repo---"
 }
 function install_dependencies {
   echo "---Installing dependencies---"
-
-
-  nvm use node
-  cd mrm_front
-  yarn
-  cd ..
+   nvm use node
+   cd mrm_front
+   yarn
+   cd ..
 }
 function build_project {
   echo "---Installing dependencies---"
-
   npm install webpack -g --unsafe-perm
   cd mrm_front
   yarn build
@@ -70,7 +68,7 @@ function retrieve_repo_key {
 function start_services {
     echo "---setting up Beats---"
 
-  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
+  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-sandbox-elk-server:9200"]'
   sudo metricbeat setup
     echo "---Starting metricbeat---"
   sudo service metricbeat start
@@ -78,6 +76,12 @@ function start_services {
   sudo service filebeat start
     echo "---reStarting NGINX---"
   sudo systemctl restart nginx
+}
+function retrieve_env_variables {
+  cd ~/mrm_front
+  echo "---Retrieving env variables---"
+  curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_frontend_env -H "Metadata-Flavor: Google" > .env
+  cd ..
 }
 
 function exit-on-failure {
@@ -94,7 +98,9 @@ function main {
   retrieve_repo_key
   clone_repo
   install_dependencies
+  retrieve_env_variables
   build_project
+  sudo systemctl restart nginx
   start_services
   successful-startup
 }

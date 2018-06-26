@@ -71,13 +71,13 @@ function start_postgres_onboot {
 
 function allow_barman_streamer_access {
   echo "---including barmanstreamer access---"
-  echo "host    replication     barmanstreamer           192.168.13.201/32        trust" | sudo tee --append $HBA_FILE
+  echo "host    replication     barmanstreamer           172.16.13.201/32        trust" | sudo tee --append $HBA_FILE
 }
 
 function allow_external_connection {
   echo "---Allow md5 auth from local network---"
-  echo "host    all             all           192.168.1.0/24         md5" | sudo tee --append $HBA_FILE
-  echo "host    all             all           192.168.13.0/24         md5" | sudo tee --append $HBA_FILE
+  echo "host    all             all           172.16.1.0/24         md5" | sudo tee --append $HBA_FILE
+  echo "host    all             all           172.16.13.0/24         md5" | sudo tee --append $HBA_FILE
 }
 
 function copy_keys {

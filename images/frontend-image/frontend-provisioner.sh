@@ -7,10 +7,11 @@ function update_repo {
 }
 
 function install_node {
-  curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-  sudo apt-get install -y nodejs
-  sudo apt-get install -y build-essential
-  sudo npm install yarn -g
+  sudo apt-get install -y build-essential libssl-dev
+  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+  . ~/.nvm/nvm.sh
+  nvm install node
+  npm install yarn -g
 }
 function setup_vault {
   echo "---Installing Vault---"

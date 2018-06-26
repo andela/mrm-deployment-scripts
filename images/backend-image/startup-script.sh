@@ -71,7 +71,7 @@ function retrieve_secret_key {
   echo $(vault read -format="json" mrm/keys | jq -r .data.mrm_api_secret_key)
 }
 function database_url {
-  echo "postgresql://$(get_db_username):$(get_db_password)@192.168.13.130:5432/postgres"
+  echo "postgresql://$(get_db_username):$(get_db_password)@172.16.13.130:5432/postgres"
 }
 function setup_env_variables {
   echo "---Setting env variables---"
@@ -146,11 +146,11 @@ function main {
   setup_env_variables
   run_migration
   run_application
-  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
+  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-sandbox-elk-server:9200"]'
   sudo metricbeat setup
   sudo service metricbeat start
   sudo service filebeat start
   successful-startup
 }
-export HOSTNAME="mrm-backend-instance"
+export HOSTNAME="mrm-sandbox-backend-instance"
 main "$@"

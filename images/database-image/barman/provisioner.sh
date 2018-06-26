@@ -43,7 +43,7 @@ function replace_config_files {
   sudo mv /tmp/barman.conf /etc/barman.conf
 }
 function add_db_details {
-  sudo su - barman -c "echo \"192.168.13.130:5432:*:barmanstreamer:$1\" > ~/.pgpass"
+  sudo su - barman -c "echo \"172.16.13.130:5432:*:barmanstreamer:$1\" > ~/.pgpass"
   sudo su - barman -c "chmod 400 ~/.pgpass"
   sudo chown barman:barman /var/lib/barman/.pgpass
 

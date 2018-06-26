@@ -7,7 +7,7 @@ resource "google_compute_firewall" "firewall-allow-icmp-internal" {
     protocol = "icmp"
   }
 
-  source_ranges = ["192.168.0.0/16"]
+  source_ranges = ["172.16.0.0/16"]
 }
 
 resource "google_compute_firewall" "firewall-allow-logstash-elastic-internal" {
@@ -20,7 +20,7 @@ resource "google_compute_firewall" "firewall-allow-logstash-elastic-internal" {
     ports    = ["5044", "9200"]
   }
 
-  source_ranges = ["192.168.0.0/16"]
+  source_ranges = ["172.16.0.0/16"]
 }
 
 resource "google_compute_firewall" "firewall-ssh-internal" {
@@ -33,7 +33,7 @@ resource "google_compute_firewall" "firewall-ssh-internal" {
     ports    = ["22"]
   }
 
-  source_ranges = ["192.168.0.0/16"]
+  source_ranges = ["172.16.0.0/16"]
 }
 
 resource "google_compute_firewall" "firewall-ssh-gateway" {
@@ -60,7 +60,7 @@ resource "google_compute_firewall" "firewall-allow-vault" {
     ports    = ["8200"]
   }
 
-  source_ranges = ["192.168.1.0/24", "192.168.13.0/24"]
+  source_ranges = ["172.16.1.0/24", "172.16.13.0/24"]
   target_tags   = ["vault-server"]
 }
 
@@ -74,7 +74,7 @@ resource "google_compute_firewall" "firewall-allow-postgres" {
     ports    = ["5432"]
   }
 
-  source_ranges = ["192.168.1.0/24", "192.168.13.0/24"]
+  source_ranges = ["172.16.1.0/24", "172.16.13.0/24"]
   target_tags   = ["postgres-server"]
 }
 
@@ -88,7 +88,7 @@ resource "google_compute_firewall" "firewall-allow-barman" {
     ports    = ["41990"]
   }
 
-  source_ranges = ["192.168.13.0/24"]
+  source_ranges = ["172.16.13.0/24"]
   target_tags   = ["postgres-server", "barman-server"]
 }
 

@@ -45,7 +45,7 @@ function get-payload {
     \"ts\": $(timestamp)}]}"
 }
 function send_Notif {
-  curl -X POST -H 'Content-type: application/json' --data "$(get-payload $1 $2 $3)" $(get-HOOK_URL)
+  curl -X POST -H 'Content-type: application/json' --data "$(get-payload $1 $2 $3)" "https://hooks.slack.com/services/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"
 }
 function main {
   send_Notif $1 $2 $3

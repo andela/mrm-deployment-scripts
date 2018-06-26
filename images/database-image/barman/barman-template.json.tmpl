@@ -1,12 +1,13 @@
 {
   "variables": {
-    "streamer_password": "{{env `STREAMER_PASSWORD`}}",
-    "project_id": "{{env `PROJECT_ID`}}"
+    "service_account_json": "",
+    "streamer_password": "",
+    "project_id": ""
   },
   "builders": [
     {
       "type": "googlecompute",
-      "account_file": "{{ user `gcloud_account_file` }}",
+      "account_file": "{{ user `service_account_json` }}",
       "project_id": "{{ user `project_id` }}",
       "source_image": "ubuntu-1604-xenial-v20180109",
       "zone": "europe-west1-b",
@@ -19,6 +20,16 @@
       "type": "file",
       "source": "./provisioner.sh",
       "destination": "/tmp/provisioner.sh"
+    },
+    {
+      "type": "file",
+      "source": "./barman.conf",
+      "destination": "/tmp/barman.conf"
+    },
+    {
+      "type": "file",
+      "source": "./cron-job",
+      "destination": "/tmp/cron-job"
     },
     {
       "type": "file",

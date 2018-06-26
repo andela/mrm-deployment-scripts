@@ -7,7 +7,7 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
 
   boot_disk {
     initialize_params {
-      image = "${var.platform-name}-vault-image"
+      image = "mrm-vault-image"
     }
   }
 
@@ -32,7 +32,7 @@ resource "google_compute_instance" "nat-gateway-instance" {
 
   boot_disk {
     initialize_params {
-      image = "${var.platform-name}-nat-gateway-image"
+      image = "mrm-nat-gateway-image"
     }
   }
 
@@ -59,7 +59,7 @@ resource "google_compute_instance" "mrm-elk-server" {
 
   boot_disk {
     initialize_params {
-      image = "${var.platform-name}-elk-image"
+      image = "mrm-elk-image"
       size  = "100"
     }
   }
@@ -88,7 +88,7 @@ resource "google_compute_instance" "mrm-postgresql-instance" {
 
   boot_disk {
     initialize_params {
-      image = "${var.platform-name}-postgres-image"
+      image = "mrm-postgres-image"
     }
   }
 
@@ -112,7 +112,7 @@ resource "google_compute_instance" "mrm-barman-instance" {
 
   boot_disk {
     initialize_params {
-      image = "${var.platform-name}-barman-image"
+      image = "mrm-barman-image"
     }
   }
 
