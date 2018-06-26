@@ -8,13 +8,9 @@ function update_repo {
 
 function install_node {
   sudo apt-get install -y build-essential libssl-dev
-
   curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-
   . ~/.nvm/nvm.sh
   nvm install node
-
-
   npm install yarn -g
 }
 function setup_vault {

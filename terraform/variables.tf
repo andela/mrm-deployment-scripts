@@ -7,20 +7,20 @@ variable "gcloud-zone" {
 }
 
 variable "gcloud-project" {
-  default = "learning-map-app"
+  default = "andela-learning"
 }
 
 variable "platform-name" {
-  default = "mrm"
+  default = "mrm-sandbox"
 }
 
 variable "subnet-cidrs" {
   type = "map"
 
   default = {
-    private-fe-be = "192.168.1.0/24"
-    private-db-va = "192.168.13.0/24"
-    public        = "192.168.200.0/24"
+    private-fe-be = "172.16.1.0/24"
+    private-db-va = "172.16.13.0/24"
+    public        = "172.16.200.0/24"
   }
 }
 
@@ -39,10 +39,10 @@ variable "static_ips" {
   type = "map"
 
   default = {
-    elk-server      = "192.168.200.104"
-    vault-server    = "192.168.13.101"
-    postgres-server = "192.168.13.130"
-    barman-server   = "192.168.13.201"
+    elk-server      = "172.16.200.104"
+    vault-server    = "172.16.13.101"
+    postgres-server = "172.16.13.130"
+    barman-server   = "172.16.13.201"
   }
 }
 

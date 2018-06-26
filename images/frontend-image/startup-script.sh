@@ -2,6 +2,7 @@
 
 function clone_repo {
 echo "---cloning repo---"
+  sudo chown -R packer /home/packer/.config
   n=0
   EXIT_CODE=1
   until [ $n -ge 4 ]
@@ -29,7 +30,6 @@ function retrieve_env_variables {
 }
 function install_dependencies {
   echo "---Installing dependencies---"
-
   nvm use node
   cd mrm_front
   yarn
@@ -72,7 +72,7 @@ function retrieve_repo_key {
 function start_services {
     echo "---setting up Beats---"
 
-  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-elk-server:9200"]'
+  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-sandbox-elk-server:9200"]'
   sudo metricbeat setup
     echo "---Starting metricbeat---"
   sudo service metricbeat start
@@ -96,6 +96,7 @@ function main {
   install_dependencies
   retrieve_env_variables
   build_project
+  sudo systemctl restart nginx
   start_services
   successful-startup
 }

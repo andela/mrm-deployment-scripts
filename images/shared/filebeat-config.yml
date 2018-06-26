@@ -57,16 +57,16 @@ setup.kibana:
   # Scheme and port can be left out and will be set to the default (http and 5601)
   # In case you specify and additional path, the scheme is required: http://localhost:5601/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
-  host: "mrm-elk-server:5601"
+  host: "mrm-sandbox-elk-server:5601"
 
 #================================ Outputs =====================================
 
 # Configure what output to use when sending the data collected by the beat.
 
 #-------------------------- Elasticsearch output ------------------------------
-#output.elasticsearch:
+output.elasticsearch:
   # Array of hosts to connect to.
-  #hosts: ["mrm-elk-server:9200"]
+  hosts: ["mrm-sandbox-elk-server:9200"]
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"
@@ -74,16 +74,16 @@ setup.kibana:
   #password: "changeme"
 
 #----------------------------- Logstash output --------------------------------
-output.logstash:
+#output.logstash:
   # The Logstash hosts
-  hosts: ["mrm-elk-server:5044"]
-  bulk_max_size: 1024
+  #hosts: ["172.16.200.104:5044"]
+  #bulk_max_size: 1024
 
-  tls:
-    certificate_authorities: ["/etc/pki/tls/certs/logstash-forwarder.crt"]
+  #tls:
+    #certificate_authorities: ["/etc/pki/tls/certs/logstash-forwarder.crt"]
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications
-  ssl.certificate_authorities: ["/etc/pki/tls/certs/logstash-forwarder.crt"]
+  #ssl.certificate_authorities: ["/etc/pki/tls/certs/logstash-forwarder.crt"]
 
 #================================ Logging =====================================
 

@@ -7,7 +7,7 @@ resource "google_compute_instance_template" "frontend-template" {
 
   disk {
     boot         = "true"
-    source_image = "${var.platform-name}-frontend-packer-image"
+    source_image = "mrm-frontend-packer-image"
   }
 
   network_interface {
@@ -34,7 +34,7 @@ resource "google_compute_instance_template" "backend-template" {
 
   disk {
     boot         = "true"
-    source_image = "${var.platform-name}-backend-packer-image"
+    source_image = "mrm-backend-packer-image"
   }
 
   network_interface {

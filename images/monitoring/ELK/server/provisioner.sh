@@ -39,7 +39,6 @@ function install_kibana {
 function install_nginx_and_conf {
   sudo apt-get -y install nginx apache2-utils
   sudo htpasswd -c -i /etc/nginx/htpasswd.users kibanaadmin <<< "$1"
-  # sudo htpasswd -c -i /etc/nginx/htpasswd.users kibanaadmin <<< "AVeryRand0mPssw0rd"
   sudo rm -rf /etc/nginx/sites-available/default
   sudo mv /tmp/nginx-config /etc/nginx/sites-available/default
 
