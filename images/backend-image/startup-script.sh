@@ -47,12 +47,12 @@ function clone_repo {
   [[ ! -d mrm_api ]] && $(exit-on-failure) && break
   echo ">>>Cloning Successful---"
 }
-get_meta_value {
+function get_meta_value {
   local key="$1"
   curl -s -H "Metadata-Flavor: Google" \
     "http://metadata.google.internal/computeMetadata/v1/project/attributes/${key}"
 }
-set_credentials_file {
+function set_credentials_file {
   export BUCKET_NAME=$(get_meta_value "bucket_name")
   gsutil cp gs://${BUCKET_NAME}/credentials.json ${HOME}/mrm_api/
 }
