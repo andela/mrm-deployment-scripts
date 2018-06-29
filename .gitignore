@@ -10,9 +10,3 @@ terraform/terraform.tfstate
 terraform/.terraform/
 .vscode/
 secrets/
-images/backend-image/backend-template.json
-images/database-image/barman/barman-template.json
-images/database-image/postgres/postgresql-template.json
-images/frontend-image/frontend-template.json
-images/nat-image/nat-template.json
-images/vault-image/vault-template.json

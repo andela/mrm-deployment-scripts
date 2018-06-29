@@ -109,7 +109,6 @@ function run_migration {
   export SECRET_KEY="$(retrieve_secret_key)"
   echo "---Running db migrations---"
   /home/packer/venv/bin/alembic upgrade head
-
 }
 function run_application {
   sudo supervisorctl reread
