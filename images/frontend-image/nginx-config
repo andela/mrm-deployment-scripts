@@ -12,7 +12,7 @@ server {
   index index.html index.htm;
 
   server_name _;
-
+  large_client_header_buffers 4 16k;
   location /server-status {
     stub_status on;
 
@@ -20,13 +20,14 @@ server {
     allow 127.0.0.1;
     deny all;
   }
-
   location /health-check {
     try_files $uri /index.html;
     access_log off;
     keepalive_requests 0;
   }
-  
+  location / {
+    try_files $uri /index.html;
+  }
   # Do not cache sw.js, required for offline-first updates.
   location /sw.js {
       add_header Cache-Control "no-cache";
@@ -35,11 +36,6 @@ server {
       expires off;
       access_log off;
   }
-  
-  location / {
-    try_files $uri /index.html;
-  }
-
 }
 
 

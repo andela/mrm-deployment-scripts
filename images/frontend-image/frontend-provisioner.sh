@@ -7,10 +7,15 @@ function update_repo {
 }
 
 function install_node {
-  curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-  sudo apt-get install -y nodejs
-  sudo apt-get install -y build-essential
-  sudo npm install yarn -g
+  sudo apt-get install -y build-essential libssl-dev
+
+  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+
+  . ~/.nvm/nvm.sh
+  nvm install node
+
+
+  npm install yarn -g
 }
 function setup_vault {
   echo "---Installing Vault---"
@@ -62,6 +67,8 @@ function config_metricbeats {
   sudo mv /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.old.yml
   sudo cp /tmp/metricbeat-config.yml /etc/metricbeat/metricbeat.yml
   sudo metricbeat modules enable nginx system
+  sudo sed -i -e 's/period: 10s/period: 300s/g' /etc/metricbeat/modules.d/nginx.yml
+  sudo sed -i -e 's/period: 10s/period: 100s/g' /etc/metricbeat/modules.d/system.yml
   sudo service metricbeat restart
   sudo update-rc.d metricbeat defaults 95 10
 }
