@@ -54,7 +54,7 @@ function get_meta_value {
 }
 function set_credentials_file {
   export BUCKET_NAME=$(get_meta_value "bucket_name")
-  gsutil cp gs://${BUCKET_NAME}/credentials.json ${HOME}/mrm_api/
+  gsutil cp gs://${BUCKET_NAME}/credentials.json ${HOME}/mrm_api/credentials.json
 }
 function install_project_dependencies {
   echo "---Installing dependencies---"
@@ -151,7 +151,6 @@ function main {
   clone_repo
   install_project_dependencies
   install_other_dependencies
-  get_meta_value
   set_credentials_file
   retrieve_env_variables
   setup_env_variables
