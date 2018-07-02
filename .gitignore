@@ -11,6 +11,7 @@ terraform/.terraform/
 .vscode/
 secrets/
 images/backend-image/backend-template.json
+images/backend-image/credentials.json
 images/database-image/barman/barman-template.json
 images/database-image/postgres/postgresql-template.json
 images/frontend-image/frontend-template.json
