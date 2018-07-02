@@ -102,20 +102,7 @@ function run_migration {
   export DEV_DATABASE_URL="$(database_url)"
   export SECRET_KEY="$(retrieve_secret_key)"
   echo "---Running db migrations---"
-  if [ -d "alembic/versions" ]; then
-    if [ "$(count_versions)" -eq 0 ]; then
-      /home/packer/venv/bin/alembic revision --autogenerate
-    elif [ "$(count_versions)" -gt 0 ] && [ "$(count_versions)" -lt 2 ]; then
-      /home/packer/venv/bin/alembic stamp head
-    elif [ "$(count_versions)" -gt 2 ]; then
-      /home/packer/venv/bin/alembic stamp head
-      /home/packer/venv/bin/alembic upgrade head
-      /home/packer/venv/bin/alembic revision --autogenerate
-    fi
-
-    /home/packer/venv/bin/alembic upgrade head
-  fi
-
+  /home/packer/venv/bin/alembic upgrade head
 }
 function run_application {
   sudo supervisorctl reread
@@ -145,7 +132,6 @@ function main {
   clone_repo
   install_project_dependencies
   install_other_dependencies
-  get_meta_value
   set_credentials_file
   retrieve_env_variables
   setup_env_variables
