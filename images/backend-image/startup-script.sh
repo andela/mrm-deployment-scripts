@@ -33,7 +33,7 @@ function clone_repo {
   until [ $n -ge 4 ]
   do
     [[ -d mrm_api ]] && EXIT_CODE=0 && break
-    git clone git@github.com:andela/mrm_api.git
+    git clone -b ch-remove-credentials-file-158656617 git@github.com:andela/mrm_api.git
 
     if [ $? -eq 128 ]; then
       EXIT_CODE=128
