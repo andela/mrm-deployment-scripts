@@ -48,7 +48,7 @@ function clone_repo {
   echo ">>>Cloning Successful---"
 }
 function set_credentials_file {
-  sudo mv /tmp/credentials.json $HOME/mrm_api/credentials.json
+  sudo mv /home/packer/credentials.json $HOME/mrm_api/credentials.json
 }
 function install_project_dependencies {
   echo "---Installing dependencies---"
