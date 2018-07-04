@@ -47,5 +47,5 @@ variable "static_ips" {
 }
 
 variable "bucket" {
-  default = "mrm-tf-state"
+  default = "mrm-sandbox-tf-state"
 }
