@@ -26,7 +26,7 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
 resource "google_compute_instance" "nat-gateway-instance" {
   name                    = "${var.platform-name}-nat-gateway-server"
   description             = "nat instance"
-  machine_type            = "n1-standard-1"
+  machine_type            = "g1-small"
   zone                    = "${var.gcloud-zone}"
   metadata_startup_script = "${lookup(var.startup_scripts, "nat-server")}"
 
