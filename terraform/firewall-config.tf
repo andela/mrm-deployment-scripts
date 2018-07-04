@@ -133,3 +133,17 @@ resource "google_compute_firewall" "firewall_api_allow_https" {
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["https-server"]
 }
+
+resource "google_compute_firewall" "firewall_elk_allow" {
+  name        = "${var.platform-name}-allow-kibana-logstash"
+  description = "Allow Kibana and Elasticsearch ports"
+  network     = "${google_compute_network.vpc.self_link}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["5601", "9200"]
+  }
+
+  source_ranges = ["192.168.0.0/16"]
+  target_tags   = ["elk-server"]
+}
