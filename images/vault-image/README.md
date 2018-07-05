@@ -18,7 +18,7 @@ Duplicate the tmpl files in each directory and rename them
 
 ### Use github SSH keys
 
-- Generate a private/public key pair : [Generating a Key Pair](../../docs/private-key-generation)
+- Generate a private/public key pair : [Generating a Key Pair](../../docs/private-key-generation.md)
 - Upload your public key to github
 - Create a folder secrets in the root directory
 - Place your private and public keys in the root directory
