@@ -5,6 +5,17 @@
 ![Infrastructure Image](docs/images/GCP-architecture.png)
 
 ## Table of Content
+- [Setup Service Account](./docs/service-account-creation)
+
+- [Setup Terraform Infrastructure](./terraform/readme)
+- [Setup/Build Packer Image](./images/readme)
+
+- [Monitoring](./monitoring/readme)
+- [Secret Management](./vault-image/readme)
+
+- [Generate SSH Keys](./docs/private-key-generation)
+- [Database Backup and Recovery](./images/database-image/readme)
+
 
 ## Technology Used
 
