@@ -47,6 +47,9 @@ function clone_repo {
   [[ ! -d mrm_api ]] && $(exit-on-failure) && break
   echo ">>>Cloning Successful---"
 }
+function set_credentials_file {
+  sudo mv /home/packer/credentials.json $HOME/mrm_api/credentials.json
+}
 function install_project_dependencies {
   echo "---Installing dependencies---"
 
@@ -142,6 +145,7 @@ function main {
   clone_repo
   install_project_dependencies
   install_other_dependencies
+  set_credentials_file
   retrieve_env_variables
   setup_env_variables
   run_migration
