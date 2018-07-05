@@ -11,12 +11,12 @@ The [ELK stack](https://www.elastic.co/guide/en/elastic-stack/6.3/installing-ela
 - **Logstash** parses and processes logs thereby making them structured before forwarding to the Elasticsearch
 - **Kibana** is a visualization platform that allows you to build and view graphs, dashboards to help understand the data as not to work with the raw data Elasticsearch returns.
 
-####Beats
+#### Beats
 These are light weight log shippers installed on the Frontend and Backend servers in this infrastructure for collecting logs and metrics. The two beats used in this project are the Filebeat and Metricbeat.
 - *[Filebeat](https://www.elastic.co/guide/en/beats/filebeat/6.3/filebeat-getting-started.html)*: is used for collecting and shipping log files
 - *[Metricbeat](https://www.elastic.co/guide/en/beats/metricbeat/6.3/metricbeat-getting-started.html)*: Collects and reports system level metrics of all instances created in the project
 
-####Stackdriver
+#### Stackdriver
 Stackdriver is the monitoring platform used in this project to provide information about the health of the frontend and backend instances in use by the application.
 Services such as Uptime checks which verifies that the frontend and backend web servers are always accessible, and also the Alerting poilicies which are set of rules to control notification if uptime checks fails, were utilised for this project and are listed below:
 - Uptime Checks

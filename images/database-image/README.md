@@ -85,14 +85,14 @@ SSH into the failed main database server and stop the running postgresql service
 
 ### Step 3
 On `mrm-barman-server` switch to the **barman** user, locate the details of the latest backup via the command:
-- ==barman show-backup **main-db-server** latest==
+- `barman show-backup main-db-server latest`
 Note down the backup ID on the first line of the output. If you want to recover a different backup other than the latest, run the command below:
-- ==barman list-backup **main-db-server**==
-- ==barman show-backup **main-db-server** *backup_id*==
+- `barman list-backup main-db-server`
+- `barman show-backup main-db-server backup_id`
 
 ### Step 4
 Next, run the command below to restore the specified backup from `mrm-barman-server` to `standby-db`
-- ==barman recover - -target-time "**End time**"  --remote-ssh-command "ssh postgres@**standby-db-ip**" **main-db-server** *backup-id* /var/lib/pgsql/9.4/data==
+- `barman recover --target-time "End time"  --remote-ssh-command "ssh postgres@standby-db-ip" main-db-server backup-id /var/lib/pgsql/9.4/data`
 
 ### Step 5
 Switch to the `standby-db` server and start the postgresql service
