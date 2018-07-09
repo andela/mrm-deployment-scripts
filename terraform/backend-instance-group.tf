@@ -6,7 +6,7 @@ resource "google_compute_health_check" "backend-health-check" {
   unhealthy_threshold = 10                                                      # 50 seconds
 
   http_health_check {
-    request_path = "/mrm?query=query%7B%0A%20allLocations%20%7B%0A%20%20%20id%0A%20%7D%0A%7D"
+    request_path = "/_healthcheck?query=%7B%0A%20%20rooms%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D"
     port         = "8000"
   }
 }
@@ -64,7 +64,7 @@ module "gce_lb_http_be" {
   }
 
   backend_params = [
-    "/mrm?query=query%7B%0A%20allLocations%20%7B%0A%20%20%20id%0A%20%7D%0A%7D,http,8000,15",
+    "/_healthcheck?query=%7B%0A%20%20rooms%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D,http,8000,15",
   ]
 
   private_key = "${file("../secrets/star_andela_key.pem")}"
