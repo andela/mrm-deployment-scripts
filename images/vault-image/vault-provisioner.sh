@@ -82,6 +82,10 @@ function write_postgres_details_to_vault {
   echo "---Writing db variables to vault---"
   vault write mrm/postgresdb mrm_db_username="postgres" mrm_db_password="$1"
 }
+function write_bugsnag_token_to_vault {
+  echo "----Writing bugsnag API token to vault---"
+  vault write mrm/bugsnag mrm_bugsnag_token="$3"
+}
 function main {
   download_vault
   start_vault_server
@@ -92,6 +96,7 @@ function main {
   mount_path
   write_key_to_vault $2
   write_postgres_details_to_vault $1
+  write_bugsnag_token_to_vault $3
   create_cron_job
 }
-main $1 $2
+main $1 $2 $3

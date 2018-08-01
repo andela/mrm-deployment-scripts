@@ -1,6 +1,7 @@
 {
   "variables": {
     "db_password": "{{env `DB_PASSWORD`}}",
+    "bugsnag_api_token": "{{env `BUGSNAG_API_TOKEN`}}",
     "api_secret_key": "{{env `API_SECRET_KEY`}}",
     "project_id": "{{env `PROJECT_ID`}}"
   },
@@ -54,7 +55,7 @@
      {
       "type": "shell",
       "inline": [
-        "/bin/bash /tmp/provisioner.sh {{ user `db_password` }} {{ user `api_secret_key` }}"
+        "/bin/bash /tmp/provisioner.sh {{ user `db_password` }} {{ user `api_secret_key` }} {{ user `bugsnag_api_token` }}"
       ]
     }
   ]
