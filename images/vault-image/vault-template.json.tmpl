@@ -3,6 +3,7 @@
     "service_account_json": "",
     "db_password": "",
     "api_secret_key": "",
+    "bugsnag_api_token": "",
     "project_id": ""
   },
   "builders": [
@@ -60,7 +61,7 @@
      {
       "type": "shell",
       "inline": [
-        "/bin/bash /tmp/provisioner.sh {{ user `db_password` }} {{ user `api_secret_key` }}"
+        "/bin/bash /tmp/provisioner.sh {{ user `db_password` }} {{ user `api_secret_key` }} {{ user `bugsnag_api_token` }}"
       ]
     }
   ]
