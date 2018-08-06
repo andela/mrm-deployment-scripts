@@ -49,7 +49,7 @@ resource "google_compute_region_instance_group_manager" "frontend-instance-group
 
 module "gce_lb_http_fe" {
   source            = "GoogleCloudPlatform/lb-http/google"
-  name              = "${var.platform-name}-frontend-loadbalancer"
+  name              = "${var.platform-name}-frontend-lb"
   target_tags       = ["public", "http-server", "https-server", "frontend-server"]
   firewall_networks = ["${google_compute_network.vpc.name}"]
 
