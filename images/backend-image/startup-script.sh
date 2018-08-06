@@ -107,6 +107,7 @@ function run_migration {
   export DATABASE_URL="$(database_url)"
   export DEV_DATABASE_URL="$(database_url)"
   export SECRET_KEY="$(retrieve_secret_key)"
+  export BUGSNAG_API_TOKEN="$(get_bugsnag_token)"
   echo "---Running db migrations---"
   /home/packer/venv/bin/alembic upgrade head
 }
