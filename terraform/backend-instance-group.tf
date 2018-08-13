@@ -1,5 +1,5 @@
 resource "google_compute_health_check" "backend-health-check" {
-  name                = "${var.platform-name}-backend-autohealing-health-check"
+  name                = "${var.platform_name}-backend-autohealing-health-check"
   check_interval_sec  = 70
   timeout_sec         = 20
   healthy_threshold   = 2
@@ -12,8 +12,8 @@ resource "google_compute_health_check" "backend-health-check" {
 }
 
 resource "google_compute_region_autoscaler" "backend-autoscaler" {
-  name   = "${var.platform-name}-backend-autoscaler"
-  region = "${var.gcloud-region}"
+  name   = "${var.platform_name}-backend-autoscaler"
+  region = "${var.gcloud_region}"
 
   target = "${google_compute_region_instance_group_manager.backend-instance-group.self_link}"
 
@@ -29,10 +29,10 @@ resource "google_compute_region_autoscaler" "backend-autoscaler" {
 }
 
 resource "google_compute_region_instance_group_manager" "backend-instance-group" {
-  name               = "${var.platform-name}-backend-instance-group"
-  base_instance_name = "${var.platform-name}-backend-instance-group"
+  name               = "${var.platform_name}-backend-instance-group"
+  base_instance_name = "${var.platform_name}-backend-instance-group"
   instance_template  = "${google_compute_instance_template.backend-template.self_link}"
-  region             = "${var.gcloud-region}"
+  region             = "${var.gcloud_region}"
 
   named_port {
     name = "http"
@@ -49,7 +49,7 @@ resource "google_compute_region_instance_group_manager" "backend-instance-group"
 
 module "gce_lb_http_be" {
   source            = "GoogleCloudPlatform/lb-http/google"
-  name              = "${var.platform-name}-backend-loadbalancer"
+  name              = "${var.platform_name}-backend-lb"
   target_tags       = ["public", "http-server", "https-server", "backend-server"]
   firewall_networks = ["${google_compute_network.vpc.name}"]
 
