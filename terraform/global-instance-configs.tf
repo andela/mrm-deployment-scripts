@@ -1,9 +1,13 @@
 resource "google_compute_instance" "mrm-vault-server-instance" {
-  name                    = "${var.platform-name}-vault-server"
+  name                    = "${var.platform_name}-vault-server"
   description             = "For help with secret management"
   machine_type            = "n1-standard-1"
+<<<<<<< HEAD
   allow_stopping_for_update = true
   zone                    = "${var.gcloud-zone}"
+=======
+  zone                    = "${var.gcloud_zone}"
+>>>>>>> [ch #159428898] modify variable definition to underscore
   metadata_startup_script = "${lookup(var.startup_scripts, "vault-server")}"
 
   boot_disk {
@@ -25,10 +29,10 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
 }
 
 resource "google_compute_instance" "nat-gateway-instance" {
-  name                    = "${var.platform-name}-nat-gateway-server"
+  name                    = "${var.platform_name}-nat-gateway-server"
   description             = "nat instance"
   machine_type            = "g1-small"
-  zone                    = "${var.gcloud-zone}"
+  zone                    = "${var.gcloud_zone}"
   metadata_startup_script = "${lookup(var.startup_scripts, "nat-server")}"
 
   boot_disk {
@@ -53,10 +57,10 @@ resource "google_compute_instance" "nat-gateway-instance" {
 }
 
 resource "google_compute_instance" "mrm-elk-server" {
-  name         = "${var.platform-name}-elk-server"
+  name         = "${var.platform_name}-elk-server"
   description  = "mrm ELK monitoring server"
   machine_type = "n1-standard-2"
-  zone         = "${var.gcloud-zone}"
+  zone         = "${var.gcloud_zone}"
 
   boot_disk {
     initialize_params {
@@ -82,10 +86,10 @@ resource "google_compute_instance" "mrm-elk-server" {
 }
 
 resource "google_compute_instance" "mrm-postgresql-instance" {
-  name         = "${var.platform-name}-postgresql-server"
+  name         = "${var.platform_name}-postgresql-server"
   description  = "System Database"
   machine_type = "n1-standard-1"
-  zone         = "${var.gcloud-zone}"
+  zone         = "${var.gcloud_zone}"
 
   boot_disk {
     initialize_params {
@@ -106,10 +110,10 @@ resource "google_compute_instance" "mrm-postgresql-instance" {
 }
 
 resource "google_compute_instance" "mrm-barman-instance" {
-  name         = "${var.platform-name}-barman-server"
+  name         = "${var.platform_name}-barman-server"
   description  = "Backup Server for Postgres Instance"
   machine_type = "n1-standard-1"
-  zone         = "${var.gcloud-zone}"
+  zone         = "${var.gcloud_zone}"
 
   boot_disk {
     initialize_params {
