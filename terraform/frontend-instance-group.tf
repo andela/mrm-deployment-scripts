@@ -1,5 +1,5 @@
 resource "google_compute_health_check" "frontend-health-check" {
-  name                = "${var.platform-name}-frontend-autohealing-health-check"
+  name                = "${var.platform_name}-frontend-autohealing-health-check"
   check_interval_sec  = 70
   timeout_sec         = 20
   healthy_threshold   = 2
@@ -12,8 +12,8 @@ resource "google_compute_health_check" "frontend-health-check" {
 }
 
 resource "google_compute_region_autoscaler" "frontend-autoscaler" {
-  name   = "${var.platform-name}-frontend-autoscaler"
-  region = "${var.gcloud-region}"
+  name   = "${var.platform_name}-frontend-autoscaler"
+  region = "${var.gcloud_region}"
 
   target = "${google_compute_region_instance_group_manager.frontend-instance-group.self_link}"
 
@@ -29,10 +29,10 @@ resource "google_compute_region_autoscaler" "frontend-autoscaler" {
 }
 
 resource "google_compute_region_instance_group_manager" "frontend-instance-group" {
-  name               = "${var.platform-name}-frontend-instance-group"
-  base_instance_name = "${var.platform-name}-frontend-instance-group"
+  name               = "${var.platform_name}-frontend-instance-group"
+  base_instance_name = "${var.platform_name}-frontend-instance-group"
   instance_template  = "${google_compute_instance_template.frontend-template.self_link}"
-  region             = "${var.gcloud-region}"
+  region             = "${var.gcloud_region}"
 
   named_port {
     name = "http"
@@ -49,7 +49,11 @@ resource "google_compute_region_instance_group_manager" "frontend-instance-group
 
 module "gce_lb_http_fe" {
   source            = "GoogleCloudPlatform/lb-http/google"
+<<<<<<< HEAD
   name              = "${var.platform-name}-frontend-lb"
+=======
+  name              = "${var.platform_name}-frontend-lb"
+>>>>>>> [ch #159428898] modify variable definition to underscore
   target_tags       = ["public", "http-server", "https-server", "frontend-server"]
   firewall_networks = ["${google_compute_network.vpc.name}"]
 
