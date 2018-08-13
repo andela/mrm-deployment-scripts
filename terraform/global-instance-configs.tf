@@ -3,6 +3,7 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
   description             = "For help with secret management"
   machine_type            = "n1-standard-1"
   zone                    = "${var.gcloud_zone}"
+  allow_stopping_for_update = true
   metadata_startup_script = "${lookup(var.startup_scripts, "vault-server")}"
 
   boot_disk {

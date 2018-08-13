@@ -70,6 +70,9 @@ function get_db_username {
 function get_db_password {
   echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_password)
 }
+function get_bugsnag_token {
+  echo $(vault read -format="json" mrm/bugsnag | jq -r .data.mrm_bugsnag_token)
+}
 function retrieve_secret_key {
   echo $(vault read -format="json" mrm/keys | jq -r .data.mrm_api_secret_key)
 }
@@ -92,6 +95,9 @@ function setup_env_variables {
     printf "\tDATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
     printf "\tDEV_DATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
   fi
+  if ! grep -q BUGSNAG_API_TOKEN /etc/supervisor/conf.d/mrm_api.conf; then
+    printf "\tBUGSNAG_API_TOKEN=\"$(get_bugsnag_token)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
+  fi
   if ! grep -q SECRET_KEY /etc/supervisor/conf.d/mrm_api.conf; then
     printf "\tSECRET_KEY=\"$(retrieve_secret_key)\"\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
   fi
@@ -101,6 +107,7 @@ function run_migration {
   export DATABASE_URL="$(database_url)"
   export DEV_DATABASE_URL="$(database_url)"
   export SECRET_KEY="$(retrieve_secret_key)"
+  export BUGSNAG_API_TOKEN="$(get_bugsnag_token)"
   echo "---Running db migrations---"
   /home/packer/venv/bin/alembic upgrade head
 }

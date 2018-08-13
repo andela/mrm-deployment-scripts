@@ -50,6 +50,7 @@ resource "google_compute_region_instance_group_manager" "backend-instance-group"
 module "gce_lb_http_be" {
   source            = "GoogleCloudPlatform/lb-http/google"
   name              = "${var.platform_name}-backend-lb"
+
   target_tags       = ["public", "http-server", "https-server", "backend-server"]
   firewall_networks = ["${google_compute_network.vpc.name}"]
 
