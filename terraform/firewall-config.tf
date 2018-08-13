@@ -144,6 +144,6 @@ resource "google_compute_firewall" "firewall_elk_allow" {
     ports    = ["5601", "9200"]
   }
 
-  source_ranges = ["192.168.0.0/16"]
-  target_tags   = ["elk-server"]
+  source_ranges = ["${var.vpc_cidr}"]
+  target_tags   = ["sandbox-elk-server"]
 }
