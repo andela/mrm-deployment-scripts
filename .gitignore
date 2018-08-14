@@ -1,4 +1,8 @@
 *.json
+production_env
+sandbox_env
+script.sh
+staging_env.sh
 .DS_Store
 ssl_cert
 vault_auth_token

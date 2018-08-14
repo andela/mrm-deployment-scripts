@@ -35,7 +35,7 @@ function copy_keys {
 
 function create_cron_job {
   echo "---Creating cron job---"
-  sudo su - barman -c "barman receive-wal --create-slot mrm-sandbox-postgresql-server"
+  sudo su - barman -c "barman receive-wal --create-slot $DATABASE_HOST"
   sudo crontab -u barman /tmp/cron-job
 }
 function replace_config_files {
