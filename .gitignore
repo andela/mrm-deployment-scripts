@@ -12,5 +12,6 @@ terraform/terraform-init
 terraform/terraform.tfstate.backup
 terraform/terraform.tfstate
 terraform/.terraform/
+terraform/variables.tf
 .vscode/
 secrets/
