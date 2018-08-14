@@ -49,11 +49,7 @@ resource "google_compute_region_instance_group_manager" "frontend-instance-group
 
 module "gce_lb_http_fe" {
   source            = "GoogleCloudPlatform/lb-http/google"
-<<<<<<< HEAD
-  name              = "${var.platform-name}-frontend-lb"
-=======
   name              = "${var.platform_name}-frontend-lb"
->>>>>>> [ch #159428898] modify variable definition to underscore
   target_tags       = ["public", "http-server", "https-server", "frontend-server"]
   firewall_networks = ["${google_compute_network.vpc.name}"]
 

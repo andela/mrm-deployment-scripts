@@ -2,12 +2,8 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
   name                    = "${var.platform_name}-vault-server"
   description             = "For help with secret management"
   machine_type            = "n1-standard-1"
-<<<<<<< HEAD
   allow_stopping_for_update = true
-  zone                    = "${var.gcloud-zone}"
-=======
   zone                    = "${var.gcloud_zone}"
->>>>>>> [ch #159428898] modify variable definition to underscore
   metadata_startup_script = "${lookup(var.startup_scripts, "vault-server")}"
 
   boot_disk {
