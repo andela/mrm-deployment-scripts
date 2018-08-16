@@ -11,35 +11,36 @@ resource "google_compute_health_check" "backend-health-check" {
   }
 }
 
-resource "google_compute_region_autoscaler" "backend-autoscaler" {
-  name   = "${var.platform_name}-backend-autoscaler"
-  region = "${var.gcloud_region}"
+resource "google_compute_backend_service" "backend-lb" {
+  name        = "${var.platform_name}-backend-lb"
+  description = "MRM Backend Load Balancer"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 120
+  enable_cdn  = false
 
-  target = "${google_compute_region_instance_group_manager.backend-instance-group.self_link}"
-
-  autoscaling_policy = {
-    max_replicas    = 4
-    min_replicas    = 2
-    cooldown_period = 200
-
-    cpu_utilization {
-      target = 0.6
-    }
+  backend {
+    group = "${google_compute_instance_group_manager.backend-instance-group.instance_group}"
   }
+
+  session_affinity = "GENERATED_COOKIE"
+
+  health_checks = ["${google_compute_health_check.backend-health-check.self_link}"]
 }
 
-resource "google_compute_region_instance_group_manager" "backend-instance-group" {
+resource "google_compute_instance_group_manager" "backend-instance-group" {
   name               = "${var.platform_name}-backend-instance-group"
   base_instance_name = "${var.platform_name}-backend-instance-group"
   instance_template  = "${google_compute_instance_template.backend-template.self_link}"
-  region             = "${var.gcloud_region}"
-
+  zone             = "${var.gcloud_zone}"
+  update_strategy    = "NONE"
+  
   named_port {
     name = "http"
-    port = 8000
+    port = 80
   }
 
-  depends_on = ["google_compute_instance.mrm-postgresql-instance", "google_compute_instance.mrm-vault-server-instance"]
+  depends_on = ["google_compute_instance.mrm-vault-server-instance"]
 
   auto_healing_policies {
     health_check      = "${google_compute_health_check.backend-health-check.self_link}"
@@ -47,26 +48,17 @@ resource "google_compute_region_instance_group_manager" "backend-instance-group"
   }
 }
 
-module "gce_lb_http_be" {
-  source            = "GoogleCloudPlatform/lb-http/google"
-  name              = "${var.platform_name}-backend-lb"
-  target_tags       = ["public", "http-server", "https-server", "backend-server"]
-  firewall_networks = ["${google_compute_network.vpc.name}"]
+resource "google_compute_autoscaler" "backend-autoscaler" {
+  name   = "${var.platform_name}-backend-autoscaler"
+  zone = "${var.gcloud_zone}"
+  target = "${google_compute_instance_group_manager.backend-instance-group.self_link}"
+  autoscaling_policy = {
+    max_replicas    = 4
+    min_replicas    = 2
+    cooldown_period = 180
 
-  ssl = true
-
-  backends = {
-    "0" = [
-      {
-        group = "${google_compute_region_instance_group_manager.backend-instance-group.instance_group}"
-      },
-    ]
+    cpu_utilization {
+      target = 0.7
+    }
   }
-
-  backend_params = [
-    "/_healthcheck?query=%7B%0A%20%20rooms%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D,http,8000,15",
-  ]
-
-  private_key = "${file("../secrets/star_andela_key.pem")}"
-  certificate = "${file("../secrets/star_andela_cert.pem")}"
 }
