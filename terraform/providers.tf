@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = "${file("google-creds.json")}"
+  credentials = "${var.service_account_path}"
   project     = "${var.gcloud_project}"
   region      = "${var.gcloud_region}"
 }
@@ -15,6 +15,6 @@ data "terraform_remote_state" "mrm" {
     bucket      = "${var.bucket}"
     prefix      = "terraform/state"
     project     = "${var.gcloud_project}"
-    credentials = "${file("google-creds.json")}"
+    credentials = "${var.service_account_path}"
   }
 }
