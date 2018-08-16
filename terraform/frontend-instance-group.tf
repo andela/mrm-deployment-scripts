@@ -11,29 +11,30 @@ resource "google_compute_health_check" "frontend-health-check" {
   }
 }
 
-resource "google_compute_region_autoscaler" "frontend-autoscaler" {
-  name   = "${var.platform_name}-frontend-autoscaler"
-  region = "${var.gcloud_region}"
+resource "google_compute_backend_service" "frontend-lb" {
+  name        = "${var.platform_name}-frontend-lb"
+  description = "MRM Frontend Load Balancer"
+  port_name   = "http"
+  protocol    = "HTTP"
+  timeout_sec = 120
+  enable_cdn  = false
 
-  target = "${google_compute_region_instance_group_manager.frontend-instance-group.self_link}"
-
-  autoscaling_policy = {
-    max_replicas    = 4
-    min_replicas    = 2
-    cooldown_period = 180
-
-    cpu_utilization {
-      target = 0.7
-    }
+  backend {
+    group = "${google_compute_instance_group_manager.frontend-instance-group.instance_group}"
   }
+
+  session_affinity = "GENERATED_COOKIE"
+
+  health_checks = ["${google_compute_health_check.frontend-health-check.self_link}"]
 }
 
-resource "google_compute_region_instance_group_manager" "frontend-instance-group" {
+resource "google_compute_instance_group_manager" "frontend-instance-group" {
   name               = "${var.platform_name}-frontend-instance-group"
   base_instance_name = "${var.platform_name}-frontend-instance-group"
   instance_template  = "${google_compute_instance_template.frontend-template.self_link}"
-  region             = "${var.gcloud_region}"
-
+  zone             = "${var.gcloud_zone}"
+  update_strategy    = "NONE"
+  
   named_port {
     name = "http"
     port = 80
@@ -47,26 +48,17 @@ resource "google_compute_region_instance_group_manager" "frontend-instance-group
   }
 }
 
-module "gce_lb_http_fe" {
-  source            = "GoogleCloudPlatform/lb-http/google"
-  name              = "${var.platform_name}-frontend-lb"
-  target_tags       = ["public", "http-server", "https-server", "frontend-server"]
-  firewall_networks = ["${google_compute_network.vpc.name}"]
+resource "google_compute_autoscaler" "frontend-autoscaler" {
+  name   = "${var.platform_name}-frontend-autoscaler"
+  zone = "${var.gcloud_zone}"
+  target = "${google_compute_instance_group_manager.frontend-instance-group.self_link}"
+  autoscaling_policy = {
+    max_replicas    = 4
+    min_replicas    = 2
+    cooldown_period = 180
 
-  ssl = true
-
-  backends = {
-    "0" = [
-      {
-        group = "${google_compute_region_instance_group_manager.frontend-instance-group.instance_group}"
-      },
-    ]
+    cpu_utilization {
+      target = 0.7
+    }
   }
-
-  backend_params = [
-    "/health-check,http,80,15",
-  ]
-
-  private_key = "${file("../secrets/star_andela_key.pem")}"
-  certificate = "${file("../secrets/star_andela_cert.pem")}"
 }
