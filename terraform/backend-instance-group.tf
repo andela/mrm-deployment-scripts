@@ -37,7 +37,7 @@ resource "google_compute_instance_group_manager" "backend-instance-group" {
   
   named_port {
     name = "http"
-    port = 8080
+    port = 8000
   }
 
   depends_on = ["google_compute_instance.mrm-postgresql-instance", "google_compute_instance.mrm-vault-server-instance"]
