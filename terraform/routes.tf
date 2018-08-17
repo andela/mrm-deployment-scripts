@@ -88,10 +88,21 @@ resource "google_compute_global_forwarding_rule" "forward-https-be" {
   port_range = "443"
 }
 
+resource "google_compute_ssl_certificate" "mrm-ssl-certificate-be" {
+  name_prefix = "mrm-certificate-be-"
+  description = "MRM HTTPS certificate"
+  private_key = "${file("../secrets/star_andela_key.pem")}"
+  certificate = "${file("../secrets/star_andela_cert.pem")}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "google_compute_target_https_proxy" "https-proxy-be" {
   name = "${var.platform_name}-https-proxy-be"
   url_map = "${google_compute_url_map.url-map-be.self_link}"
-  ssl_certificates = ["${google_compute_ssl_certificate.mrm-ssl-certificate.self_link}"]
+  ssl_certificates = ["${google_compute_ssl_certificate.mrm-ssl-certificate-be.self_link}"]
 }
 # End HTTPS
 
