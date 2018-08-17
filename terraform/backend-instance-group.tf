@@ -37,10 +37,10 @@ resource "google_compute_instance_group_manager" "backend-instance-group" {
   
   named_port {
     name = "http"
-    port = 80
+    port = 8080
   }
 
-  depends_on = ["google_compute_instance.mrm-vault-server-instance"]
+  depends_on = ["google_compute_instance.mrm-postgresql-instance", "google_compute_instance.mrm-vault-server-instance"]
 
   auto_healing_policies {
     health_check      = "${google_compute_health_check.backend-health-check.self_link}"
@@ -55,7 +55,7 @@ resource "google_compute_autoscaler" "backend-autoscaler" {
   autoscaling_policy = {
     max_replicas    = 4
     min_replicas    = 2
-    cooldown_period = 180
+    cooldown_period = 200
 
     cpu_utilization {
       target = 0.7
