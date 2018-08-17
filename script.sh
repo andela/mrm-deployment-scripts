@@ -87,8 +87,15 @@ delete_created_files() {
     done
 }
 
+create_shared_templates() {
+    local new_dir="$DIRECTORY"
+    eval new_dir+="/images/shared/"
+    findTemplateFiles 'TEMPLATES' $new_dir
+    findAndReplaceVariables
+}
 
 create_image_scripts() {
+    create_shared_templates
     if [[ $1 == "backend" ]]; then
         local new_dir="$DIRECTORY"
         eval new_dir+="/images/backend-image/"
