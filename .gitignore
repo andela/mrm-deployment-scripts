@@ -1,7 +1,6 @@
 *.json
 production_env.sh
 sandbox_env.sh
-script.sh
 staging_env.sh
 .DS_Store
 ssl_cert
