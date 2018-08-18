@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+function get_instance_metadata {
+  local name="$1"
+
+  curl -s -H "Metadata-Flavor: Google" \
+    "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
+}
+
+function store_instance_variables {
+    echo "---Retrieving env variables---"
+    echo "APP_SETTINGS=\"$(get_instance_metadata "APP_SETTINGS")\"" >> .env
+    echo "MRM_URL=\"$(get_instance_metadata "MRM_URL")\"" >> .env
+    echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL")\"" >> .env
+    echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
+    echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
+}
+
 function create_repo_key {
   if [ ! -d $HOME/.ssh ]; then
     echo "---creating ssh directory---"
@@ -59,10 +75,6 @@ function install_project_dependencies {
 }
 function count_versions {
   echo $(find alembic/versions/*.py | wc -l)
-}
-function retrieve_env_variables {
-  echo "---Retrieving env variables---"
-  curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_env -H "Metadata-Flavor: Google" > .env
 }
 function get_db_username {
   echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_username)
@@ -133,7 +145,7 @@ function main {
   install_project_dependencies
   install_other_dependencies
   set_credentials_file
-  retrieve_env_variables
+  store_instance_variables
   setup_env_variables
   run_migration
   run_application
