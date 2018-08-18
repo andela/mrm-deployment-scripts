@@ -319,6 +319,8 @@ build(){
             delete_created_files
             create_terraform_scripts
             delete_created_files
+            create_shared_templates
+            delete_created_files
         done
     elif [[ $2 == 'terraform' ]]; then
         eval "$1_terraform_variables"
