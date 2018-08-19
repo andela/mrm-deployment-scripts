@@ -16,6 +16,7 @@ resource "google_compute_instance_template" "frontend-template" {
     ANDELA_LOGIN_URL    = "${var.andela_login_url}"
     ANDELA_API_URL      = "${var.andela_api_url}"
     mrm_vault_server_IP = "${lookup(var.static_ips, "vault-server")}"
+    environment         = "${var.environment}"
   }
 
   network_interface {
@@ -52,6 +53,7 @@ resource "google_compute_instance_template" "backend-template" {
     ANDELA_LOGIN_URL    = "${var.andela_login_url}"
     ANDELA_API_URL      = "${var.andela_api_url}"
     mrm_vault_server_IP = "${lookup(var.static_ips, "vault-server")}"
+    environment         = "${var.environment}"
   }
 
   network_interface {
