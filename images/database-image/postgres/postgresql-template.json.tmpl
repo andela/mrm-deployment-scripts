@@ -19,6 +19,26 @@
   "provisioners": [
     {
       "type": "file",
+      "source": "./backup.sh",
+      "destination": "/tmp/backup.sh"
+    },
+    {
+      "type": "file",
+      "source": "./cronjob",
+      "destination": "/tmp/cronjob"
+    },
+    {
+      "type": "file",
+      "source": "./startup-script.sh",
+      "destination": "/tmp/startup-script.sh"
+    },
+    {
+      "type": "file",
+      "source": "./validate.sh",
+      "destination": "/tmp/validate.sh"
+    },
+    {
+      "type": "file",
       "source": "./filebeat-config.yml",
       "destination": "/tmp/filebeat-config.yml"
     },

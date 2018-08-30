@@ -103,6 +103,10 @@ function copy_keys {
   sudo ls -l /var/lib/postgresql/.ssh/
 
 }
+function backup_cron_job {
+  echo "--- backup cron job ---"
+  mv /tmp/startup-script.sh /tmp/backup.sh /tmp/cronjob /tmp/validate.sh /home/packer/
+}
 function main {
   install_postgresql
   install_adminpack
@@ -120,5 +124,6 @@ function main {
   sudo systemctl restart postgresql
   install_config_filebeats
   config_metricbeats
+  backup_cron_job
 }
 main $1 $2
