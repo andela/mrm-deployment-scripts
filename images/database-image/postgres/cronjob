@@ -1,0 +1,3 @@
+MAILTO=""
+* * * * * /bin/bash /var/lib/postgresql/backup.sh
+0 0 7 * * /bin/bash /var/lib/postgresql/validate.sh
