@@ -81,15 +81,20 @@ resource "google_compute_instance" "mrm-elk-server" {
 }
 
 resource "google_compute_instance" "mrm-postgresql-instance" {
-  name         = "${var.platform_name}-postgresql-server"
-  description  = "System Database"
-  machine_type = "n1-standard-1"
-  zone         = "${var.gcloud_zone}"
+  name                      = "${var.platform_name}-postgresql-server"
+  description               = "System Database"
+  machine_type              = "n1-standard-1"
+  zone                      = "${var.gcloud_zone}"
+  metadata_startup_script   = "${lookup(var.startup_scripts, "postgres-server")}"
 
   boot_disk {
     initialize_params {
       image = "mrm-postgres-image"
     }
+  }
+  
+  metadata {
+    environment               = "${var.environment}"
   }
 
   tags = ["postgresql-server", "no-ip", "postgres-server"]
