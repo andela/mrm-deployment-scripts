@@ -42,6 +42,7 @@ variable "startup_scripts" {
     vault-server    = "sudo su - packer -c '. /home/packer/startup-script.sh'"
     frontend-server = "sudo su - packer -c '. ~/startup-script.sh'"
     backend-server  = "sudo su - packer -c '. ~/startup-script.sh'"
+    postgres-server = "sudo su - packer -c '. ~/startup-script.sh'"
   }
 }
 
