@@ -10,7 +10,7 @@ resource "google_compute_route" "private-to-nat" {
 
 resource "google_compute_global_forwarding_rule" "forward-http-fe" {
   name       = "${var.platform_name}-foward-http-fe"
-  ip_address = "${google_compute_global_address.frontend-external-address.address}"
+  ip_address = "${var.frontend_address_name}"
   target     = "${google_compute_target_http_proxy.http-proxy-fe.self_link}"
   port_range = "80"
 }
@@ -24,7 +24,7 @@ resource "google_compute_target_http_proxy" "http-proxy-fe" {
 # Begin HTTPS
 resource "google_compute_global_forwarding_rule" "forward-https-fe" {
   name       = "${var.platform_name}-forward-https-fe"
-  ip_address = "${google_compute_global_address.frontend-external-address.address}"
+  ip_address = "${var.frontend_address_name}"
   target     = "${google_compute_target_https_proxy.mrm-https-proxy.self_link}"
   port_range = "443"
 }
@@ -52,7 +52,7 @@ resource "google_compute_url_map" "url-map-fe" {
   default_service = "${google_compute_backend_service.frontend-lb.self_link}"
 
   host_rule {
-    hosts        = ["${google_compute_global_address.frontend-external-address.address}"]
+    hosts        = ["${var.frontend_address_name}"]
     path_matcher = "allpaths"
   }
 
@@ -69,7 +69,7 @@ resource "google_compute_url_map" "url-map-fe" {
 
 resource "google_compute_global_forwarding_rule" "forward-http-be" {
   name       = "${var.platform_name}-foward-http-be"
-  ip_address = "${google_compute_global_address.backend-external-address.address}"
+  ip_address = "${var.backend_address_name}"
   target     = "${google_compute_target_http_proxy.http-proxy-be.self_link}"
   port_range = "80"
 }
@@ -83,7 +83,7 @@ resource "google_compute_target_http_proxy" "http-proxy-be" {
 # Begin HTTPS
 resource "google_compute_global_forwarding_rule" "forward-https-be" {
   name       = "${var.platform_name}-forward-https-be"
-  ip_address = "${google_compute_global_address.backend-external-address.address}"
+  ip_address = "${var.backend_address_name}"
   target     = "${google_compute_target_https_proxy.https-proxy-be.self_link}"
   port_range = "443"
 }
@@ -111,7 +111,7 @@ resource "google_compute_url_map" "url-map-be" {
   default_service = "${google_compute_backend_service.backend-lb.self_link}"
 
   host_rule {
-    hosts        = ["${google_compute_global_address.backend-external-address.address}"]
+    hosts        = ["${var.backend_address_name}"]
     path_matcher = "allpaths"
   }
 
