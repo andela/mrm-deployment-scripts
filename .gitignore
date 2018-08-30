@@ -14,3 +14,4 @@ terraform/.terraform/
 terraform/variables.tf
 .vscode/
 secrets/
+images/shared/*.yml
