@@ -35,10 +35,3 @@ resource "google_compute_address" "ip-ep-elk" {
   region = "${var.gcloud_region}"
 }
 
-resource "google_compute_global_address" "frontend-external-address" {
-  name         = "${var.frontend_address_name}"
-}
-
-resource "google_compute_global_address" "backend-external-address" {
-  name         = "${var.backend_address_name}"
-}
