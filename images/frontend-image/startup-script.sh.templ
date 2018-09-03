@@ -57,10 +57,10 @@ function build_project {
   cd ..
 }
 function get_vault_address {
-  echo $(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_vault_server_IP -H "Metadata-Flavor: Google")
+  echo $(get_instance_metadata "mrm_vault_server_IP")
 }
 function login_vault {
-  vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_vault_auth_token -H "Metadata-Flavor: Google")
+  vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/$mrm_vault_auth_token -H "Metadata-Flavor: Google")
   export VAULT_ADDR="http://$(get_vault_address):8200"
 
   echo "---Authenticating on Vault Server---"

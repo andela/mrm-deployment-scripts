@@ -24,7 +24,7 @@ function generate_new_token {
 }
 
 function update_token {
-  gcloud beta compute project-info add-metadata --metadata mrm_vault_auth_token=$(generate_new_token)
+  gcloud beta compute project-info add-metadata --metadata $mrm_vault_auth_token=$(generate_new_token)
 }
 function auth_vault {
   echo "--- Authentication Vault Server ---"
