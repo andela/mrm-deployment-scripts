@@ -215,8 +215,8 @@ packer_action() {
 
     elif [[ $1 == "vault" ]]; then
         local new_dir="$DIRECTORY"
-        local script="frontend-template.json"
-        eval new_dir+="/images/frontend-image/"
+        local script="vault-template.json"
+        eval new_dir+="/images/vault-image/"
         info "Creating $1 scripts"
         approve_scripts_recreation $1 $3
         cd $new_dir
@@ -226,8 +226,8 @@ packer_action() {
 
     elif [[ $1 == "barman" ]]; then
         local new_dir="$DIRECTORY"
-        local script="frontend-template.json"
-        eval new_dir+="/images/frontend-image/"
+        local script="barman-template.json"
+        eval new_dir+="/images/barman-image/"
         info "Creating $1 scripts"
         approve_scripts_recreation $1 $3
         cd $new_dir
@@ -237,8 +237,8 @@ packer_action() {
 
     elif [[ $1 == "postgres" ]]; then
         local new_dir="$DIRECTORY"
-        local script="frontend-template.json"
-        eval new_dir+="/images/frontend-image/"
+        local script="postgres-template.json"
+        eval new_dir+="/images/postgres-image/"
         info "Creating $1 scripts"
         approve_scripts_recreation $1 $3
         cd $new_dir
