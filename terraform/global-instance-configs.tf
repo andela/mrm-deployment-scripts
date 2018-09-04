@@ -12,6 +12,11 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
     }
   }
 
+  metadata {
+    environment         = "${var.environment}"
+  }
+
+
   tags = ["vault-server", "no-ip"]
 
   network_interface {
