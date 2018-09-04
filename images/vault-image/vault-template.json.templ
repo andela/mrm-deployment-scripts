@@ -1,9 +1,9 @@
 {
   "variables": {
     "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
-    "db_password": "",
-    "api_secret_key": "",
-    "bugsnag_api_token": "",
+    "db_password": "{{env `db_password`}}",
+    "api_secret_key": "{{env `api_secret_key`}}",
+    "bugsnag_api_token": "{{env `bugsnag_api_token`}}",
     "project_id": "{{env `PROJECT_ID`}}"
   },
   "builders": [
