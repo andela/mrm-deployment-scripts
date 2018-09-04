@@ -4,6 +4,9 @@ sandbox_env.sh
 staging_env.sh
 sandbox_env_temp.sh
 staging_env_temp.sh
+*filebeat-config.yml
+*metricbeat-config.yml
+*provisioner.sh
 .DS_Store
 ssl_cert
 vault_auth_token
