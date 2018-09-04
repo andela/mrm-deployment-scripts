@@ -5,6 +5,13 @@ set -o xtrace
 set -o pipefail
 
 
+function get_instance_metadata {
+  local name="$1"
+
+  curl -s -H "Metadata-Flavor: Google" \
+    "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
+}
+
 function initialize_vault {
   export VAULT_ADDR=http://127.0.0.1:8200
   cd /home/packer/
@@ -24,8 +31,16 @@ function generate_new_token {
 }
 
 function update_token {
-  gcloud beta compute project-info add-metadata --metadata $mrm_vault_auth_token=$(generate_new_token)
+    if [[ $(get_instance_metadata "environment") == "production" ]]; then
+        gcloud beta compute project-info add-metadata --metadata production_mrm_vault_auth_token=$(generate_new_token)
+    elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
+        gcloud beta compute project-info add-metadata --metadata staging_mrm_vault_auth_token=$(generate_new_token)
+    elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
+        gcloud beta compute project-info add-metadata --metadata sandbox_mrm_vault_auth_token=$(generate_new_token)
+    fi
+    
 }
+
 function auth_vault {
   echo "--- Authentication Vault Server ---"
   vault login $(get_Token 7)
