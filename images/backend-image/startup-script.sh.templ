@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+function get_instance_metadata {
+  local name="$1"
+
+  curl -s -H "Metadata-Flavor: Google" \
+    "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
+}
+
+function store_instance_variables {
+    echo "---Retrieving env variables---"
+    echo "APP_SETTINGS=\"$(get_instance_metadata "APP_SETTINGS")\"" >> .env
+    echo "MRM_URL=\"$(get_instance_metadata "MRM_URL")\"" >> .env
+    echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL")\"" >> .env
+    echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
+    echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
+}
+
 function create_repo_key {
   if [ ! -d $HOME/.ssh ]; then
     echo "---creating ssh directory---"
@@ -16,10 +32,16 @@ function create_repo_key {
   chmod 600 $HOME/.ssh/id_rsa
 }
 function get_vault_address {
-  echo $(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_vault_server_IP -H "Metadata-Flavor: Google")
+  echo $(get_instance_metadata "mrm_vault_server_IP")
 }
 function login_vault {
-  vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_vault_auth_token -H "Metadata-Flavor: Google")
+    if [[ $(get_instance_metadata "environment") == "production" ]]; then
+        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/production_mrm_vault_auth_token -H "Metadata-Flavor: Google")
+    elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
+        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/staging_mrm_vault_auth_token -H "Metadata-Flavor: Google")
+    elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
+        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/sandbox_mrm_vault_auth_token -H "Metadata-Flavor: Google")
+    fi
   export VAULT_ADDR="http://$(get_vault_address):8200"
 
   echo "---Authenticating on Vault Server---"
@@ -33,7 +55,13 @@ function clone_repo {
   until [ $n -ge 4 ]
   do
     [[ -d mrm_api ]] && EXIT_CODE=0 && break
-    git clone git@github.com:andela/mrm_api.git
+    if [[ $(get_instance_metadata "environment") == "production" ]]; then
+        git clone -b master git@github.com:andela/mrm_api.git
+    elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
+        git clone -b develop git@github.com:andela/mrm_api.git
+    elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
+        git clone -b master git@github.com:andela/mrm_api.git
+    fi
 
     if [ $? -eq 128 ]; then
       EXIT_CODE=128
@@ -60,24 +88,17 @@ function install_project_dependencies {
 function count_versions {
   echo $(find alembic/versions/*.py | wc -l)
 }
-function retrieve_env_variables {
-  echo "---Retrieving env variables---"
-  curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_env -H "Metadata-Flavor: Google" > .env
-}
 function get_db_username {
   echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_username)
 }
 function get_db_password {
   echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_password)
 }
-function get_bugsnag_token {
-  echo $(vault read -format="json" mrm/bugsnag | jq -r .data.mrm_bugsnag_token)
-}
 function retrieve_secret_key {
   echo $(vault read -format="json" mrm/keys | jq -r .data.mrm_api_secret_key)
 }
 function database_url {
-  echo "postgresql://$(get_db_username):$(get_db_password)@172.16.13.130:5432/postgres"
+    echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/postgres"
 }
 function setup_env_variables {
   echo "---Setting env variables---"
@@ -95,9 +116,6 @@ function setup_env_variables {
     printf "\tDATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
     printf "\tDEV_DATABASE_URL=\"$(database_url)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
   fi
-  if ! grep -q BUGSNAG_API_TOKEN /etc/supervisor/conf.d/mrm_api.conf; then
-    printf "\tBUGSNAG_API_TOKEN=\"$(get_bugsnag_token)\",\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
-  fi
   if ! grep -q SECRET_KEY /etc/supervisor/conf.d/mrm_api.conf; then
     printf "\tSECRET_KEY=\"$(retrieve_secret_key)\"\n" | sudo tee --append /etc/supervisor/conf.d/mrm_api.conf
   fi
@@ -107,7 +125,6 @@ function run_migration {
   export DATABASE_URL="$(database_url)"
   export DEV_DATABASE_URL="$(database_url)"
   export SECRET_KEY="$(retrieve_secret_key)"
-  export BUGSNAG_API_TOKEN="$(get_bugsnag_token)"
   echo "---Running db migrations---"
   /home/packer/venv/bin/alembic upgrade head
 }
@@ -140,15 +157,15 @@ function main {
   install_project_dependencies
   install_other_dependencies
   set_credentials_file
-  retrieve_env_variables
+  store_instance_variables
   setup_env_variables
   run_migration
   run_application
-  sudo filebeat setup --template -E output.logstash.enabled=false -E 'output.elasticsearch.hosts=["mrm-sandbox-elk-server:9200"]'
+  sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["$(ELASTICSEARCH_HOST):9200"]"
   sudo metricbeat setup
   sudo service metricbeat start
   sudo service filebeat start
   successful-startup
 }
-export HOSTNAME="mrm-sandbox-backend-instance"
+export HOSTNAME=$BACKEND_HOST
 main "$@"

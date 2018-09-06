@@ -1,4 +1,12 @@
 *.json
+production_env.sh
+sandbox_env.sh
+staging_env.sh
+sandbox_env_temp.sh
+staging_env_temp.sh
+*filebeat-config.yml
+*metricbeat-config.yml
+*provisioner.sh
 .DS_Store
 ssl_cert
 vault_auth_token
@@ -8,5 +16,7 @@ terraform/terraform-init
 terraform/terraform.tfstate.backup
 terraform/terraform.tfstate
 terraform/.terraform/
+terraform/variables.tf
 .vscode/
 secrets/
+images/shared/*.yml

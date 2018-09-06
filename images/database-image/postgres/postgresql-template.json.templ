@@ -1,9 +1,9 @@
 {
   "variables": {
-    "service_account_json": "",
-    "streamer_password": "",
-    "db_password": "",
-    "project_id": ""
+    "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
+    "streamer_password": "{{env `STREAMER_PASSWORD`}}",
+    "db_password": "{{env `DB_PASSWORD`}}",
+    "project_id": "{{env `PROJECT_ID`}}"
   },
   "builders": [
     {
@@ -17,6 +17,26 @@
     }
   ],
   "provisioners": [
+    {
+      "type": "file",
+      "source": "./backup.sh",
+      "destination": "/tmp/backup.sh"
+    },
+    {
+      "type": "file",
+      "source": "./cronjob",
+      "destination": "/tmp/cronjob"
+    },
+    {
+      "type": "file",
+      "source": "./startup-script.sh",
+      "destination": "/tmp/startup-script.sh"
+    },
+    {
+      "type": "file",
+      "source": "./validate.sh",
+      "destination": "/tmp/validate.sh"
+    },
     {
       "type": "file",
       "source": "./filebeat-config.yml",

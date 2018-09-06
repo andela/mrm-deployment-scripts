@@ -1,0 +1,83 @@
+variable "gcloud_region" {
+  type = "string"
+}
+
+variable "gcloud_zone" {
+  type = "string"
+}
+
+variable "gcloud_project" {
+  type = "string"
+}
+
+variable "service_account_path" {
+  type = "string"
+}
+
+variable "frontend_address_name" {
+  type = "string"
+} 
+
+variable "backend_address_name" {
+  type = "string"
+} 
+
+variable "platform_name" {
+  type = "string"
+}
+
+variable "vpc_cidr" {
+  type = "string"
+}
+
+variable "subnet_cidrs" {
+  type = "map"
+}
+
+variable "startup_scripts" {
+  type = "map"
+
+  default = {
+    nat-server      = "sudo sysctl -w net.ipv4.ip_forward=1; sudo iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE"
+    vault-server    = "sudo su - packer -c '. /home/packer/startup-script.sh'"
+    frontend-server = "sudo su - packer -c '. ~/startup-script.sh'"
+    backend-server  = "sudo su - packer -c '. ~/startup-script.sh'"
+    postgres-server = "sudo su - packer -c '. ~/startup-script.sh'"
+  }
+}
+
+variable "static_ips" {
+  type = "map"
+}
+
+variable "bucket" {
+  type="string"
+}
+
+variable "elk_server" {
+  type = "string"
+}
+
+variable "app_settings" {
+  type = "string"
+}
+
+variable "mrm_url" {
+  type = "string"
+}
+
+variable "mrm_api_url" {
+  type = "string"
+}
+
+variable "andela_login_url" {
+  type = "string"
+}
+
+variable "andela_api_url" {
+  type = "string"
+}
+
+variable "environment" {
+  type = "string"
+}

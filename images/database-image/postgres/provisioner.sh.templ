@@ -71,13 +71,13 @@ function start_postgres_onboot {
 
 function allow_barman_streamer_access {
   echo "---including barmanstreamer access---"
-  echo "host    replication     barmanstreamer           172.16.13.201/32        trust" | sudo tee --append $HBA_FILE
+  echo "host    replication     barmanstreamer           $(BARMAN_STREAMER_IP)        trust" | sudo tee --append $HBA_FILE
 }
 
 function allow_external_connection {
   echo "---Allow md5 auth from local network---"
-  echo "host    all             all           172.16.1.0/24         md5" | sudo tee --append $HBA_FILE
-  echo "host    all             all           172.16.13.0/24         md5" | sudo tee --append $HBA_FILE
+  echo "host    all             all           $(EXTERNAL_CONNECTION_FE)         md5" | sudo tee --append $HBA_FILE
+  echo "host    all             all           $(EXTERNAL_CONNECTION_BE)         md5" | sudo tee --append $HBA_FILE
 }
 
 function copy_keys {
@@ -103,6 +103,10 @@ function copy_keys {
   sudo ls -l /var/lib/postgresql/.ssh/
 
 }
+function backup_cron_job {
+  echo "--- backup cron job ---"
+  mv /tmp/startup-script.sh /tmp/backup.sh /tmp/cronjob /tmp/validate.sh /home/packer/
+}
 function main {
   install_postgresql
   install_adminpack
@@ -120,5 +124,6 @@ function main {
   sudo systemctl restart postgresql
   install_config_filebeats
   config_metricbeats
+  backup_cron_job
 }
 main $1 $2

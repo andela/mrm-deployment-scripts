@@ -35,7 +35,7 @@ function copy_keys {
 
 function create_cron_job {
   echo "---Creating cron job---"
-  sudo su - barman -c "barman receive-wal --create-slot mrm-sandbox-postgresql-server"
+  sudo su - barman -c "barman receive-wal --create-slot $DATABASE_HOST"
   sudo crontab -u barman /tmp/cron-job
 }
 function replace_config_files {
@@ -43,7 +43,7 @@ function replace_config_files {
   sudo mv /tmp/barman.conf /etc/barman.conf
 }
 function add_db_details {
-  sudo su - barman -c "echo \"172.16.13.130:5432:*:barmanstreamer:$1\" > ~/.pgpass"
+    sudo su - barman -c "echo \"$(DATABASE_IP):5432:*:barmanstreamer:$1\" > ~/.pgpass"
   sudo su - barman -c "chmod 400 ~/.pgpass"
   sudo chown barman:barman /var/lib/barman/.pgpass
 

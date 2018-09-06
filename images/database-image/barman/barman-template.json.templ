@@ -1,8 +1,8 @@
 {
   "variables": {
-    "service_account_json": "",
-    "streamer_password": "",
-    "project_id": ""
+    "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
+    "streamer_password": "{{env `STREAMER_PASSWORD`}}",
+    "project_id": "{{env `PROJECT_ID`}}"
   },
   "builders": [
     {
