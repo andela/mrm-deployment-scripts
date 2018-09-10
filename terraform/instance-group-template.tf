@@ -47,13 +47,20 @@ resource "google_compute_instance_template" "backend-template" {
   }
 
   metadata {
-    APP_SETTINGS        = "${var.app_settings}"
-    MRM_URL             = "${var.mrm_url}"
-    MRM_API_URL         = "${var.mrm_api_url}"
-    ANDELA_LOGIN_URL    = "${var.andela_login_url}"
-    ANDELA_API_URL      = "${var.andela_api_url}"
-    mrm_vault_server_IP = "${lookup(var.static_ips, "vault-server")}"
-    environment         = "${var.environment}"
+    APP_SETTINGS            = "${var.app_settings}"
+    MRM_URL                 = "${var.mrm_url}"
+    MRM_API_URL             = "${var.mrm_api_url}"
+    ANDELA_LOGIN_URL        = "${var.andela_login_url}"
+    ANDELA_API_URL          = "${var.andela_api_url}"
+    mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
+    environment             = "${var.environment}"
+    MAIL_SERVER             = "${var.mail_server}"
+    MAIL_PORT               = "${var.mail_port}"
+    MAIL_USE_TLS            = "${var.mail_use_tls}"
+    MAIL_USERNAME           = "${var.mail_username}"
+    MAIL_PASSWORD           = "${var.mail_password}"
+    CELERY_BROKER_URL       = "${var.celery_broker_url}"
+    CELERY_RESULT_BACKEND   = "${var.celery_result_backend}"
   }
 
   network_interface {

@@ -9,11 +9,20 @@ function get_instance_metadata {
 
 function store_instance_variables {
     echo "---Retrieving env variables---"
-    echo "APP_SETTINGS=\"$(get_instance_metadata "APP_SETTINGS")\"" >> .env
+    echo "APP_SETTINGS=$(get_instance_metadata "APP_SETTINGS")" >> .env
     echo "MRM_URL=\"$(get_instance_metadata "MRM_URL")\"" >> .env
     echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL")\"" >> .env
     echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
     echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
+    echo "MAIL_SERVER=\"$(get_instance_metadata "MAIL_SERVER")\"" >> .env
+    echo "MAIL_PORT=\"$(get_instance_metadata "MAIL_PORT")\"" >> .env
+    echo "MAIL_USE_TLS=\"$(get_instance_metadata "MAIL_USE_TLS")\"" >> .env
+    echo "MAIL_USERNAME=\"$(get_instance_metadata "MAIL_USERNAME")\"" >> .env
+    echo "MAIL_PASSWORD=\"$(get_instance_metadata "MAIL_PASSWORD")\"" >> .env
+
+    # Celery configuration
+    echo "CELERY_BROKER_URL=\"$(get_instance_metadata "CELERY_BROKER_URL")\"" >> .env
+    echo "CELERY_RESULT_BACKEND=\"$(get_instance_metadata "CELERY_RESULT_BACKEND")\"" >> .env
 }
 
 function create_repo_key {
@@ -58,7 +67,7 @@ function clone_repo {
     if [[ $(get_instance_metadata "environment") == "production" ]]; then
         git clone -b master git@github.com:andela/mrm_api.git
     elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
-        git clone -b develop git@github.com:andela/mrm_api.git
+        git clone -b ft-new-offices-created-sends-notifications-to-admins-160096084 git@github.com:andela/mrm_api.git
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
         git clone -b master git@github.com:andela/mrm_api.git
     fi
@@ -141,6 +150,11 @@ function use_venv {
 function install_other_dependencies {
   pip install gunicorn
   pip install gevent
+  pip install redis
+  pip install celery
+}
+function start_celery {
+    celery worker -A celery_worker.celery --loglevel=info
 }
 function exit-on-failure {
   sudo bash /home/packer/slack.sh "Failure" ${HOSTNAME} ${EXIT_CODE}

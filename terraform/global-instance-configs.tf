@@ -115,6 +115,35 @@ resource "google_compute_instance" "mrm-postgresql-instance" {
   }
 }
 
+resource "google_compute_instance" "mrm-redis-instance" {
+  name                      = "${var.platform_name}-redis-server"
+  description               = "Redis Database"
+  machine_type              = "n1-standard-1"
+  zone                      = "${var.gcloud_zone}"
+  metadata_startup_script   = "${lookup(var.startup_scripts, "redis-server")}"
+
+  boot_disk {
+    initialize_params {
+      image = "mrm-redis-image"
+    }
+  }
+  
+  metadata {
+    environment               = "${var.environment}"
+  }
+
+  tags = ["redis-server", "no-ip"]
+
+  network_interface {
+    subnetwork = "${google_compute_subnetwork.private-db-va.self_link}"
+    address    = "${google_compute_address.ip-static-redis.address}"
+  }
+
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+}
+
 resource "google_compute_instance" "mrm-barman-instance" {
   name         = "${var.platform_name}-barman-server"
   description  = "Backup Server for Postgres Instance"

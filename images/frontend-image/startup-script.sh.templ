@@ -7,14 +7,19 @@ function get_instance_metadata {
     "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
 }
 
+function get_global_metadata {
+    echo "---Retrieving env variables---"
+    curl http://metadata.google.internal/computeMetadata/v1/project/attributes/staging_mrm_frontend_env -H "Metadata-Flavor: Google" >> .env 
+}
+
 function store_instance_variables {
   echo "---Retrieving env variables---"
   cd ~/mrm_front
-  echo "APP_SETTINGS=\"$(get_instance_metadata "APP_SETTINGS")\"" >> .env
   echo "MRM_URL=\"$(get_instance_metadata "MRM_URL")\"" >> .env
   echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL")\"" >> .env
   echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
   echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
+  get_global_metadata
   cd ..
 }
 
@@ -67,6 +72,7 @@ function login_vault {
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
         vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/sandbox_mrm_vault_auth_token -H "Metadata-Flavor: Google")
     fi
+  vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/mrm_vault_auth_token -H "Metadata-Flavor: Google")
   export VAULT_ADDR="http://$(get_vault_address):8200"
 
   echo "---Authenticating on Vault Server---"

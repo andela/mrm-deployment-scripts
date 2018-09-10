@@ -14,6 +14,14 @@ resource "google_compute_address" "ip-static-postgresql" {
   address      = "${lookup(var.static_ips, "postgres-server")}"
 }
 
+resource "google_compute_address" "ip-static-redis" {
+  name         = "${var.platform_name}-redis-internal-ip"
+  region       = "${var.gcloud_region}"
+  address_type = "INTERNAL"
+  subnetwork   = "${google_compute_subnetwork.private-db-va.self_link}"
+  address      = "${lookup(var.static_ips, "redis-server")}"
+}
+
 resource "google_compute_address" "ip-static-barman" {
   name         = "${var.platform_name}-barman-server-internal-ip"
   region       = "${var.gcloud_region}"

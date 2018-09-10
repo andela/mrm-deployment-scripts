@@ -78,6 +78,20 @@ resource "google_compute_firewall" "firewall-allow-postgres" {
   target_tags   = ["postgres-server"]
 }
 
+resource "google_compute_firewall" "firewall-allow-redis" {
+  name        = "${var.platform_name}-allow-redis-private"
+  description = "Allow port 6379 between specific instances"
+  network     = "${google_compute_network.vpc.self_link}"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6379"]
+  }
+
+  source_ranges = ["${lookup(var.subnet_cidrs, "private-fe-be")}", "${lookup(var.subnet_cidrs, "private-db-va")}"]
+  target_tags   = ["redis-server"]
+}
+
 resource "google_compute_firewall" "firewall-allow-barman" {
   name        = "${var.platform_name}-allow-barman-private"
   description = "Allow port 41990 between specific instances"

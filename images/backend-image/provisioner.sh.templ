@@ -48,6 +48,9 @@ function config_metricbeats {
   sudo service metricbeat restart
   sudo update-rc.d metricbeat defaults 95 10
 }
+function move_start_app_script {
+  sudo mv /tmp/start_app.sh $HOME/start_app.sh
+}
 function move_startup_script {
   sudo mv /tmp/startup-script.sh $HOME/startup-script.sh
 }
@@ -67,6 +70,7 @@ function check_status_beats {
 function main {
   install_dependencies
   move_startup_script
+  move_start_app_script
   move_supervisor_script
   setup_vault
   install_config_filebeats

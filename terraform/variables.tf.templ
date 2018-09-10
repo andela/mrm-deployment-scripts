@@ -43,6 +43,7 @@ variable "startup_scripts" {
     frontend-server = "sudo su - packer -c '. ~/startup-script.sh'"
     backend-server  = "sudo su - packer -c '. ~/startup-script.sh'"
     postgres-server = "sudo su - packer -c '. ~/startup-script.sh'"
+    redis-server    = "sudo su - converge -c '. ~/startup-script.sh'"
   }
 }
 
@@ -79,5 +80,33 @@ variable "andela_api_url" {
 }
 
 variable "environment" {
+  type = "string"
+}
+
+variable "mail_server" {
+  type = "string"
+}
+
+variable "mail_port" {
+  type = "string"
+}
+
+variable "mail_use_tls" {
+  type = "string"
+}
+
+variable "mail_username" {
+  type = "string"
+}
+
+variable "mail_password" {
+  type = "string"
+}
+
+variable "celery_broker_url" {
+  type = "string"
+}
+
+variable "celery_result_backend" {
   type = "string"
 }
