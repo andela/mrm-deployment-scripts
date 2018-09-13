@@ -105,7 +105,7 @@ function retrieve_repo_key {
 function start_services {
     echo "---setting up Beats---"
 
-    sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["$(ELASTICSEARCH_HOST):9200"]"
+    sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["mrm-sandbox-elk-server:9200"]"
   sudo metricbeat setup
     echo "---Starting metricbeat---"
   sudo service metricbeat start
@@ -134,5 +134,5 @@ function main {
   start_services
   successful-startup
 }
-export HOSTNAME=$FRONTEND_HOST
+export HOSTNAME=mrm-sandbox-frontend-instance
 main "$@"

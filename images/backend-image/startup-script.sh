@@ -68,7 +68,7 @@ function clone_repo {
     elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
         git clone -b develop git@github.com:andela/mrm_api.git
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
-        git clone -b ft-new-offices-created-sends-notifications-to-admins-160096084 git@github.com:andela/mrm_api.git
+        git clone -b master git@github.com:andela/mrm_api.git
     fi
 
     if [ $? -eq 128 ]; then
@@ -106,7 +106,7 @@ function retrieve_secret_key {
   echo $(vault read -format="json" mrm/keys | jq -r .data.mrm_api_secret_key)
 }
 function database_url {
-    echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/postgres"
+    echo "postgresql://$(get_db_username):$(get_db_password)@172.16.13.130:5432/postgres"
 }
 function setup_env_variables {
   echo "---Setting env variables---"
@@ -169,11 +169,11 @@ function main {
   setup_env_variables
   run_migration
   run_application
-  sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["$(ELASTICSEARCH_HOST):9200"]"
+  sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["mrm-sandbox-elk-server:9200"]"
   sudo metricbeat setup
   sudo service metricbeat start
   sudo service filebeat start
   successful-startup
 }
-export HOSTNAME=$BACKEND_HOST
+export HOSTNAME=mrm-sandbox-backend-instance
 main "$@"

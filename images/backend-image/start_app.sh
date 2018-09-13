@@ -4,3 +4,4 @@ printenv
 echo $APP_SETTINGS 
 cd /home/packer/mrm_api
 celery worker -A celery_worker.celery --loglevel=info
+ 

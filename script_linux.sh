@@ -234,7 +234,7 @@ packer_action() {
     elif [[ $1 == "barman" ]]; then
         local new_dir="$DIRECTORY"
         local script="barman-template.json"
-        eval new_dir+="/images/barman-image/"
+        eval new_dir+="/images/database-image/barman/"
         info "Creating $1 scripts"
         approve_scripts_recreation $1 $3
         cd $new_dir
