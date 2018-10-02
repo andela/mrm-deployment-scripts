@@ -1,5 +1,5 @@
 resource "google_compute_instance_template" "frontend-template" {
-  name                    = "${var.platform_name}-frontend-instance-template"
+  name-prefix             = "${var.platform_name}-frontend-template"
   description             = "Template used for frontend instances"
   instance_description    = "MRM Frontend Instance"
   machine_type            = "n1-standard-1"
@@ -35,7 +35,7 @@ resource "google_compute_instance_template" "frontend-template" {
 }
 
 resource "google_compute_instance_template" "backend-template" {
-  name                    = "${var.platform_name}-backend-instance-template"
+  name_prefix             = "${var.platform_name}-backend-template"
   description             = "Template used for backend instances"
   instance_description    = "MRM backend Instance"
   machine_type            = "n1-standard-1"
