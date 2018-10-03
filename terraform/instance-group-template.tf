@@ -7,7 +7,7 @@ resource "google_compute_instance_template" "frontend-template" {
 
   disk {
     boot         = "true"
-    source_image = "mrm-frontend-packer-image"
+    source_image = "{var.frontend_image_url}"
   }
 
   metadata {
@@ -43,7 +43,7 @@ resource "google_compute_instance_template" "backend-template" {
 
   disk {
     boot         = "true"
-    source_image = "mrm-backend-packer-image"
+    source_image = "{var.backend_image_url}"
   }
 
   metadata {

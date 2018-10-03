@@ -129,7 +129,7 @@ function setup_env_variables {
   fi
 }
 function run_migration {
-  export $(cat .env)
+  export $(cat /home/packer/mrm_api/.env | xargs)
   export DATABASE_URL="$(database_url)"
   export DEV_DATABASE_URL="$(database_url)"
   export SECRET_KEY="$(retrieve_secret_key)"
