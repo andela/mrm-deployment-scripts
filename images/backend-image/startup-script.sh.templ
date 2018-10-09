@@ -7,6 +7,10 @@ function get_instance_metadata {
     "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
 }
 
+function get_database {
+        gcloud sql databases list --instance=converge-postgres | grep staging
+}
+
 function store_instance_variables {
     echo "---Retrieving env variables---"
     echo "APP_SETTINGS=\"$(get_instance_metadata "APP_SETTINGS")\"" >> .env
@@ -16,6 +20,12 @@ function store_instance_variables {
     elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
         echo "MRM_URL=\"$(get_instance_metadata "MRM_URL_STAGING")\"" >> .env
         echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL_STAGING")\"" >> .env
+		if [[ $(get_database) == '' ]]; then
+			echo "Creating staging database..."
+        	gcloud sql databases create staging --instance=converge-postgres
+		else
+			echo "Staging database exists..."
+		fi
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
         echo "MRM_URL=\"$(get_instance_metadata "MRM_URL_SANDBOX")\"" >> .env
         echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL_SANDBOX")\"" >> .env
@@ -43,10 +53,8 @@ function get_vault_address {
   echo $(get_instance_metadata "mrm_vault_server_IP")
 }
 function login_vault {
-    if [[ $(get_instance_metadata "environment") == "production" ]]; then
+    if [[ $(get_instance_metadata "environment") == "production" ]] || [[ $(get_instance_metadata "environment") == "staging" ]]; then
         vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/production_mrm_vault_auth_token -H "Metadata-Flavor: Google")
-    elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
-        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/staging_mrm_vault_auth_token -H "Metadata-Flavor: Google")
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
         vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/sandbox_mrm_vault_auth_token -H "Metadata-Flavor: Google")
     fi
@@ -68,7 +76,7 @@ function clone_repo {
     elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
         git clone -b develop git@github.com:andela/mrm_api.git
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
-        git clone -b master git@github.com:andela/mrm_api.git
+        git clone -b develop git@github.com:andela/mrm_api.git
     fi
 
     if [ $? -eq 128 ]; then
@@ -106,7 +114,11 @@ function retrieve_secret_key {
   echo $(vault read -format="json" mrm/keys | jq -r .data.mrm_api_secret_key)
 }
 function database_url {
-    echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/postgres"
+    if [ $(get_instance_metadata "environment") == "production" ]; then
+        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/postgres"
+    else
+        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/staging"
+    fi
 }
 function setup_env_variables {
   echo "---Setting env variables---"

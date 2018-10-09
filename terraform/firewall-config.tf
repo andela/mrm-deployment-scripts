@@ -43,7 +43,7 @@ resource "google_compute_firewall" "firewall-ssh-gateway" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["22", "5432"]
   }
 
   source_ranges = ["0.0.0.0/0"]
@@ -62,34 +62,6 @@ resource "google_compute_firewall" "firewall-allow-vault" {
 
   source_ranges = ["${lookup(var.subnet_cidrs, "private-fe-be")}", "${lookup(var.subnet_cidrs, "private-db-va")}"]
   target_tags   = ["vault-server"]
-}
-
-resource "google_compute_firewall" "firewall-allow-postgres" {
-  name        = "${var.platform_name}-allow-postgres-private"
-  description = "Allow port 5432 between specific instances"
-  network     = "${google_compute_network.vpc.self_link}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["5432"]
-  }
-
-  source_ranges = ["${lookup(var.subnet_cidrs, "private-fe-be")}", "${lookup(var.subnet_cidrs, "private-db-va")}"]
-  target_tags   = ["postgres-server"]
-}
-
-resource "google_compute_firewall" "firewall-allow-barman" {
-  name        = "${var.platform_name}-allow-barman-private"
-  description = "Allow port 41990 between specific instances"
-  network     = "${google_compute_network.vpc.self_link}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["41990"]
-  }
-
-  source_ranges = ["${lookup(var.subnet_cidrs, "private-db-va")}"]
-  target_tags   = ["postgres-server", "barman-server"]
 }
 
 resource "google_compute_firewall" "firewall-api-allow-http" {

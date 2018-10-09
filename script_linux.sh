@@ -132,20 +132,6 @@ create_image_scripts() {
         findTemplateFiles 'TEMPLATES' $new_dir
         findAndReplaceVariables
 
-    elif [[ $1 == "barman" ]]; then
-        local new_dir="$DIRECTORY"
-        eval new_dir+="/images/database-image/barman/"
-        info "building $1 image"
-        findTemplateFiles 'TEMPLATES' $new_dir
-        findAndReplaceVariables
-
-    elif [[ $1 == "postgres" ]]; then
-        local new_dir="$DIRECTORY"
-        eval new_dir+="/images/database-image/postgres/"
-        info "building $1 image"
-        findTemplateFiles 'TEMPLATES' $new_dir
-        findAndReplaceVariables
-
     elif [[ $1 == "terraform" ]]; then
         local new_dir="$DIRECTORY"
         eval new_dir+="/terraform/"
@@ -224,28 +210,6 @@ packer_action() {
         packer $2 "$new_dir$script"
         cd $DIRECTORY
 
-    elif [[ $1 == "barman" ]]; then
-        local new_dir="$DIRECTORY"
-        local script="barman-template.json"
-        eval new_dir+="/images/barman-image/"
-        info "Creating $1 scripts"
-        approve_scripts_recreation $1 $3
-        cd $new_dir
-        info "Executing packer"
-        packer $2 "$new_dir$script"
-        cd $DIRECTORY
-
-    elif [[ $1 == "postgres" ]]; then
-        local new_dir="$DIRECTORY"
-        local script="postgresql-template.json"
-        eval new_dir+="/images/database-image/postgres/"
-        info "Creating $1 scripts"
-        approve_scripts_recreation $1 $3
-        cd $new_dir
-        info "Executing packer"
-        packer $2 "$new_dir$script"
-        cd $DIRECTORY
-
     else
         error "Error: no image name $1"
 
@@ -281,8 +245,7 @@ build(){
             if [[ $4 == 'all' ]]; then
                 local all_images=(
                 'backend' 'frontend' 
-                'elk' 'nat' 'vault' 
-                'barman' 'postgres')
+                'elk' 'nat' 'vault')
                 for image in "${all_images[@]}"; do
                     create_image_scripts $image
                 done
@@ -298,8 +261,7 @@ build(){
         if [[ $4 == 'all' ]]; then
             local all_images=(
             'backend' 'frontend' 
-            'elk' 'nat' 'vault' 
-            'barman' 'postgres')
+            'elk' 'nat' 'vault')
             for image in "${all_images[@]}"; do
                 packer_action $image $3 $5
             done
@@ -312,8 +274,7 @@ build(){
     elif [[ $2 == 'clean' ]]; then
         local all_images=(
         'backend' 'frontend' 
-        'elk' 'nat' 'vault' 
-        'barman' 'postgres')
+        'elk' 'nat' 'vault')
         for image in "${all_images[@]}"; do
             create_image_scripts $image
             delete_created_files

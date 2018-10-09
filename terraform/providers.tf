@@ -13,7 +13,7 @@ data "terraform_remote_state" "mrm" {
 
   config {
     bucket      = "${var.bucket}"
-    prefix      = "terraform/state"
+    prefix      = "${var.prefix}"
     project     = "${var.gcloud_project}"
     credentials = "${var.service_account_path}"
   }
