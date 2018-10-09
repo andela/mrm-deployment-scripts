@@ -42,7 +42,6 @@ variable "startup_scripts" {
     vault-server    = "sudo su - packer -c '. /home/packer/startup-script.sh'"
     frontend-server = "sudo su - packer -c '. ~/startup-script.sh'"
     backend-server  = "sudo su - packer -c '. ~/startup-script.sh'"
-    postgres-server = "sudo su - packer -c '. ~/startup-script.sh'"
   }
 }
 
@@ -62,11 +61,27 @@ variable "app_settings" {
   type = "string"
 }
 
-variable "mrm_url" {
+variable "mrm_url_sandbox" {
   type = "string"
 }
 
-variable "mrm_api_url" {
+variable "mrm_api_url_sandbox" {
+  type = "string"
+}
+
+variable "mrm_url_staging" {
+  type = "string"
+}
+
+variable "mrm_api_url_staging" {
+  type = "string"
+}
+
+variable "mrm_url_production" {
+  type = "string"
+}
+
+variable "mrm_api_url_production" {
   type = "string"
 }
 
@@ -79,7 +94,7 @@ variable "andela_api_url" {
 }
 
 variable "environment" {
-  type = "string"
+  type = "map"
 }
 
 variable "database_user" {
@@ -116,4 +131,28 @@ variable "frontend_image_url" {
 
 variable "backend_image_url" {
   type = "string"
+}
+
+variable "firebase_api_key" {
+  type = "string"
+}
+
+variable "firebase_project_id" {
+  type = "string"
+}
+
+variable "firebase_database_name" {
+  type = "string"
+}
+
+variable "firebase_bucket" {
+  type = "string"
+}
+
+variable "prefix" {
+  type = "string"
+}
+
+variable "hosts" {
+  type = "map"
 }

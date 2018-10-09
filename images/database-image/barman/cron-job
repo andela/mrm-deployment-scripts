@@ -1,2 +1,0 @@
-45 23 * * * /usr/bin/barman switch-wal --force --archive mrm-sandbox-postgresql-server; /usr/bin/barman backup mrm-sandbox-postgresql-server
-23 * * * * /usr/bin/barman cron

@@ -12,7 +12,7 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
   }
 
   metadata {
-    environment         = "${var.environment}"
+    environment             = "${lookup(var.environment, "production")}"
   }
 
 
@@ -79,60 +79,6 @@ resource "google_compute_instance" "mrm-elk-server" {
   }
 
   tags = ["elk-server", "public", "http-server", "https-server"]
-
-  service_account {
-    scopes = ["cloud-platform"]
-  }
-}
-
-resource "google_compute_instance" "mrm-postgresql-instance" {
-  name                      = "${var.platform_name}-postgresql-server"
-  description               = "System Database"
-  machine_type              = "n1-standard-1"
-  zone                      = "${var.gcloud_zone}"
-  metadata_startup_script   = "${lookup(var.startup_scripts, "postgres-server")}"
-
-  boot_disk {
-    initialize_params {
-      image = "mrm-postgres-image"
-    }
-  }
-  
-  metadata {
-    environment               = "${var.environment}"
-  }
-
-  tags = ["postgresql-server", "no-ip", "postgres-server"]
-
-  network_interface {
-    subnetwork = "${google_compute_subnetwork.private-db-va.self_link}"
-    address    = "${google_compute_address.ip-static-postgresql.address}"
-  }
-
-  service_account {
-    scopes = ["cloud-platform"]
-  }
-}
-
-resource "google_compute_instance" "mrm-barman-instance" {
-  name         = "${var.platform_name}-barman-server"
-  description  = "Backup Server for Postgres Instance"
-  machine_type = "n1-standard-1"
-  zone         = "${var.gcloud_zone}"
-
-  boot_disk {
-    initialize_params {
-      image = "mrm-barman-image"
-    }
-  }
-
-  tags       = ["barman-server", "no-ip"]
-  depends_on = ["google_compute_instance.mrm-postgresql-instance"]
-
-  network_interface {
-    subnetwork = "${google_compute_subnetwork.private-db-va.self_link}"
-    address    = "${google_compute_address.ip-static-barman.address}"
-  }
 
   service_account {
     scopes = ["cloud-platform"]
