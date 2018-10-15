@@ -1,8 +1,12 @@
 {
+  "variables": {
+    "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
+    "project_id": "{{env `PROJECT_ID`}}"
+},
   "builders": [
     {
       "type": "googlecompute",
-     "account_file": "{{ user `gcloud_account_file` }}",
+     "account_file": "{{ user `service_account_json` }}",
       "project_id": "{{ user `project_id` }}",
       "source_image": "ubuntu-1604-xenial-v20180109",
       "zone": "europe-west1-b",
@@ -11,6 +15,16 @@
     }
   ],
 "provisioners": [
+    {
+      "type": "file",
+      "source": "./mrm_api.conf",
+      "destination": "/tmp/mrm_api.conf"
+    },
+	{
+      "type": "file",
+      "source": "./credentials.json",
+      "destination": "/home/packer/credentials.json"
+	},
     {
       "type": "file",
       "source": "../shared/slack.sh",

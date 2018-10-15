@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "firewall-allow-icmp-internal" {
-  name        = "${var.platform-name}-allow-icmp-internal"
+  name        = "${var.platform_name}-allow-icmp-internal"
   description = "Allow ICMP between instances on the network"
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -7,11 +7,11 @@ resource "google_compute_firewall" "firewall-allow-icmp-internal" {
     protocol = "icmp"
   }
 
-  source_ranges = ["192.168.0.0/16"]
+  source_ranges = ["${var.vpc_cidr}"]
 }
 
 resource "google_compute_firewall" "firewall-allow-logstash-elastic-internal" {
-  name        = "${var.platform-name}-allow-logstash-internal"
+  name        = "${var.platform_name}-allow-logstash-internal"
   description = "Allow Connection between instances and logstash and elasticsearch on network"
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -20,11 +20,11 @@ resource "google_compute_firewall" "firewall-allow-logstash-elastic-internal" {
     ports    = ["5044", "9200"]
   }
 
-  source_ranges = ["192.168.0.0/16"]
+  source_ranges = ["${var.vpc_cidr}"]
 }
 
 resource "google_compute_firewall" "firewall-ssh-internal" {
-  name        = "${var.platform-name}-allow-ssh-internal"
+  name        = "${var.platform_name}-allow-ssh-internal"
   description = "Allow ssh between instances on the network"
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -33,17 +33,17 @@ resource "google_compute_firewall" "firewall-ssh-internal" {
     ports    = ["22"]
   }
 
-  source_ranges = ["192.168.0.0/16"]
+  source_ranges = ["${var.vpc_cidr}"]
 }
 
 resource "google_compute_firewall" "firewall-ssh-gateway" {
-  name        = "${var.platform-name}-allow-ssh-gateway"
+  name        = "${var.platform_name}-allow-ssh-gateway"
   description = "Allow ssh between gateway instance and internet"
   network     = "${google_compute_network.vpc.self_link}"
 
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["22", "5432"]
   }
 
   source_ranges = ["0.0.0.0/0"]
@@ -51,7 +51,7 @@ resource "google_compute_firewall" "firewall-ssh-gateway" {
 }
 
 resource "google_compute_firewall" "firewall-allow-vault" {
-  name        = "${var.platform-name}-allow-vault-private"
+  name        = "${var.platform_name}-allow-vault-private"
   description = "Allow port 8200 between specific instances"
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -60,40 +60,12 @@ resource "google_compute_firewall" "firewall-allow-vault" {
     ports    = ["8200"]
   }
 
-  source_ranges = ["192.168.1.0/24", "192.168.13.0/24"]
+  source_ranges = ["${lookup(var.subnet_cidrs, "private-fe-be")}", "${lookup(var.subnet_cidrs, "private-db-va")}"]
   target_tags   = ["vault-server"]
 }
 
-resource "google_compute_firewall" "firewall-allow-postgres" {
-  name        = "${var.platform-name}-allow-postgres-private"
-  description = "Allow port 5432 between specific instances"
-  network     = "${google_compute_network.vpc.self_link}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["5432"]
-  }
-
-  source_ranges = ["192.168.1.0/24", "192.168.13.0/24"]
-  target_tags   = ["postgres-server"]
-}
-
-resource "google_compute_firewall" "firewall-allow-barman" {
-  name        = "${var.platform-name}-allow-barman-private"
-  description = "Allow port 41990 between specific instances"
-  network     = "${google_compute_network.vpc.self_link}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["41990"]
-  }
-
-  source_ranges = ["192.168.13.0/24"]
-  target_tags   = ["postgres-server", "barman-server"]
-}
-
 resource "google_compute_firewall" "firewall-api-allow-http" {
-  name        = "${var.platform-name}-allow-http-api"
+  name        = "${var.platform_name}-allow-http-api"
   description = "Allow HTTP access across the firewall into the API Virtual Private Cloud."
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -107,7 +79,7 @@ resource "google_compute_firewall" "firewall-api-allow-http" {
 }
 
 resource "google_compute_firewall" "firewall-allow-to-lb" {
-  name        = "${var.platform-name}-allow-to-lb"
+  name        = "${var.platform_name}-allow-to-lb"
   description = "Allow HTTP access across the firewall into the API Virtual Private Cloud."
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -121,7 +93,7 @@ resource "google_compute_firewall" "firewall-allow-to-lb" {
 }
 
 resource "google_compute_firewall" "firewall_api_allow_https" {
-  name        = "${var.platform-name}-allow-https-api"
+  name        = "${var.platform_name}-allow-https-api"
   description = "Allow HTTPS access across the firewall into the api Virtual Private Cloud."
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -135,7 +107,7 @@ resource "google_compute_firewall" "firewall_api_allow_https" {
 }
 
 resource "google_compute_firewall" "firewall_elk_allow" {
-  name        = "${var.platform-name}-allow-kibana-logstash"
+  name        = "${var.platform_name}-allow-kibana-logstash"
   description = "Allow Kibana and Elasticsearch ports"
   network     = "${google_compute_network.vpc.self_link}"
 
@@ -144,6 +116,6 @@ resource "google_compute_firewall" "firewall_elk_allow" {
     ports    = ["5601", "9200"]
   }
 
-  source_ranges = ["192.168.0.0/16"]
-  target_tags   = ["elk-server"]
+  source_ranges = ["${var.vpc_cidr}"]
+  target_tags   = ["sandbox-elk-server"]
 }

@@ -1,14 +1,15 @@
 {
   "variables": {
-    "db_password": "{{env `DB_PASSWORD`}}",
-    "bugsnag_api_token": "{{env `BUGSNAG_API_TOKEN`}}",
-    "api_secret_key": "{{env `API_SECRET_KEY`}}",
+    "service_account_json": "{{env `SERVICE_ACCOUNT_PATH`}}",
+    "db_password": "{{env `db_password`}}",
+    "api_secret_key": "{{env `api_secret_key`}}",
+    "bugsnag_api_token": "{{env `bugsnag_api_token`}}",
     "project_id": "{{env `PROJECT_ID`}}"
   },
   "builders": [
     {
       "type": "googlecompute",
-      "account_file": "{{ user `gcloud_account_file` }}",
+      "account_file": "{{ user `service_account_json` }}",
       "project_id": "{{ user `project_id` }}",
       "source_image": "ubuntu-1604-xenial-v20180109",
       "zone": "europe-west1-b",
@@ -21,6 +22,11 @@
       "type": "file",
       "source": "./vault-provisioner.sh",
       "destination": "/tmp/provisioner.sh"
+    },
+    {
+      "type": "file",
+      "source": "./vault.service",
+      "destination": "/tmp/vault.service"
     },
     {
       "type": "file",
