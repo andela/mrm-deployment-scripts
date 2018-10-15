@@ -1,0 +1,15 @@
+- hosts: all 
+  become: yes 
+  become_method: sudo
+  remote_user: ubuntu
+
+  vars:
+    NODEJS_VERSION: 8
+    
+  roles:
+    - installNode
+    - setupNginx
+    - startupScript
+    - setupVault
+    - filebeatConfig
+    - metricbeatConfig
