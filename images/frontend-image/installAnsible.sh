@@ -2,10 +2,8 @@
 
 installAnsible () {
   sudo apt-get update
-  sudo apt-get install software-properties-common -y
-  sudo apt-add-repository ppa:ansible/ansible
-  sudo apt-get update
-  sudo apt-get install ansible -y
+  sudo apt install python-pip -y
+  pip install -U ansible==2.7
 }
 
 
