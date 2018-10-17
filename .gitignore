@@ -22,3 +22,5 @@ images/frontend-image/startup-script.sh
 .vscode/
 secrets/
 images/shared/*.yml
+images/frontend-image/roles/filebeatConfig/templates
+images/frontend-image/roles/metricbeatConfig/templates

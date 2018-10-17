@@ -1,0 +1,23 @@
+---
+- name: move default metricbeat config file
+  command: mv /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.old.yml
+- name: template out custom metricbeat config
+  template:
+    src: metricbeat-config.yml.temp
+    dest: /etc/metricbeat/metricbeat.yml
+- name: enable metricbeat modules
+  command: metricbeat modules enable nginx system
+- name: Edit the nginx config for metricbeat
+  lineinfile:
+    path: /etc/metricbeat/modules.d/nginx.yml
+    regexp: '^period: 10s'
+    line: 'period: 300s'
+- name: Edit the system config for metricbeat
+  lineinfile:
+    path: /etc/metricbeat/modules.d/system.yml
+    regexp: '^period: 10s'
+    line: 'period: 300s'
+  notify:
+    - restart metricbeat
+- name: configure the metric beat to start automatically during boot
+  command: update-rc.d metricbeat defaults 95 10

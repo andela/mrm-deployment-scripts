@@ -1,0 +1,16 @@
+---
+- name: Add gpg key for node
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+- name: Add nodeJS repository
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+- name: Install nodejs
+  apt:
+    name: nodejs
+    state: present
+- name: Install yarn
+  command: npm install yarn -g
