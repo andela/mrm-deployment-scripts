@@ -1,4 +1,5 @@
 *.json
+*.retry
 production_env.sh
 sandbox_env.sh
 staging_env.sh

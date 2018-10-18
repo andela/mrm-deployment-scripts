@@ -1,0 +1,18 @@
+---
+# move files
+
+- name: move startup file
+  template:
+    src: ../../../startup-script.sh
+    dest: /home/packer/startup-script.sh
+
+- name: move supervisor script
+  template:
+    src: ../../../mrm_api.conf
+    dest: /etc/supervisor/conf.d/mrm_api.conf
+
+- name: move slack file
+  template:
+    src: ../../../shared/slack.sh
+    dest: /home/packer/slack.sh
+    
