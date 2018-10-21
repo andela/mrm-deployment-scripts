@@ -2,4 +2,4 @@
 - name: template out startup script
   template:
     src: startup-script.sh
-    dest: "{{ ansible_env.HOME }}/startup-script.sh"
+    dest: "startup-script.sh"
