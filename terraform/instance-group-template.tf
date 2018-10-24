@@ -20,7 +20,7 @@ resource "google_compute_instance_template" "frontend-template-staging" {
     ANDELA_LOGIN_URL        = "${var.andela_login_url}"
     ANDELA_API_URL          = "${var.andela_api_url}"
     mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
-    environment             = "${lookup(var.environment, "staging")}"
+    environment             = "${var.template_environment}"
     FIREBASE_API_KEY        = "${var.firebase_api_key}"
     FIREBASE_PROJECT_ID     = "${var.firebase_project_id}"
     FIREBASE_DATABASE_NAME  = "${var.firebase_database_name}"
@@ -65,7 +65,7 @@ resource "google_compute_instance_template" "frontend-template-prod" {
     ANDELA_LOGIN_URL        = "${var.andela_login_url}"
     ANDELA_API_URL          = "${var.andela_api_url}"
     mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
-    environment             = "${lookup(var.environment, "production")}"
+    environment             = "production"
     FIREBASE_API_KEY        = "${var.firebase_api_key}"
     FIREBASE_PROJECT_ID     = "${var.firebase_project_id}"
     FIREBASE_DATABASE_NAME  = "${var.firebase_database_name}"
@@ -110,7 +110,7 @@ resource "google_compute_instance_template" "backend-template-staging" {
     ANDELA_LOGIN_URL        = "${var.andela_login_url}"
     ANDELA_API_URL          = "${var.andela_api_url}"
     mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
-    environment             = "${lookup(var.environment, "staging")}"
+    environment             = "${var.template_environment}"
   }
 
   network_interface {
@@ -152,7 +152,7 @@ resource "google_compute_instance_template" "backend-template-prod" {
     ANDELA_LOGIN_URL        = "${var.andela_login_url}"
     ANDELA_API_URL          = "${var.andela_api_url}"
     mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
-    environment             = "${lookup(var.environment, "production")}"
+    environment             = "production"
   }
 
   network_interface {
