@@ -93,8 +93,12 @@ variable "andela_api_url" {
   type = "string"
 }
 
-variable "environment" {
-  type = "map"
+variable "vault_environment" {
+  type = "string"
+}
+
+variable "template_environment" {
+  type = "string"
 }
 
 variable "database_user" {
