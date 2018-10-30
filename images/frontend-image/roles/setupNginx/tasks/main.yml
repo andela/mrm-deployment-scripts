@@ -15,6 +15,8 @@
   template:
     src: nginx-config
     dest: /etc/nginx/sites-available/default
+  notify:
+  - restart nginx
 - file:
     path: /etc/nginx/sites-available/default
     owner: root
