@@ -7,9 +7,4 @@
     NODEJS_VERSION: 8
     
   roles:
-    - installNode
-    - setupNginx
-    - startupScript
-    - setupVault
-    - filebeatConfig
-    - metricbeatConfig
+    - natConfig

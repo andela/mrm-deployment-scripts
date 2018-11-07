@@ -17,7 +17,11 @@
   "provisioners": [
     {
       "type": "shell",
-      "script": "./nat-config.sh"
+      "script": "installAnsible.sh"
+    },
+    {
+      "type": "ansible",
+      "playbook_file": "playbook.yml"
     }
   ]
 }
