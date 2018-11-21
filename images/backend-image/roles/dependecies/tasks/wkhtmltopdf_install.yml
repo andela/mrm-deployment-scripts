@@ -1,0 +1,31 @@
+---
+# install dependencies
+
+- name: install wkhtmltopdf
+  get_url:
+    url: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
+    dest: /home/packer/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
+
+- name: unzip wkhtmltopdf
+  unarchive:
+    src: /home/packer/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz
+    dest: /home/packer/
+    remote_src: yes
+
+- name: copy wkhtmltopdf
+  copy:
+    src: /home/packer/wkhtmltox/bin/wkhtmltopdf
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: "a+x"
+    remote_src: yes
+
+- name: copy wkhtmltoimage
+  copy:
+    src: /home/packer/wkhtmltox/bin/wkhtmltoimage
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: "a+x"
+    remote_src: yes 
