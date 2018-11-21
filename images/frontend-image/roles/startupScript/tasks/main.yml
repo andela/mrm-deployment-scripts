@@ -1,5 +1,5 @@
 ---
 - name: template out startup script
   template:
-    src: startup-script.sh
+    src: ../../../startup-script.sh
     dest: "startup-script.sh"

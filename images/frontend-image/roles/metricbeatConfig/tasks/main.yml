@@ -3,7 +3,7 @@
   command: mv /etc/metricbeat/metricbeat.yml /etc/metricbeat/metricbeat.old.yml
 - name: template out custom metricbeat config
   template:
-    src: metricbeat-config.yml.temp
+    src: ../../../../shared/metricbeat-config.yml
     dest: /etc/metricbeat/metricbeat.yml
 - name: enable metricbeat modules
   command: metricbeat modules enable nginx system

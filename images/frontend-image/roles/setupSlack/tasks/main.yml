@@ -1,0 +1,5 @@
+---
+- name: template out startup script
+  template:
+    src: ../../../../shared/slack.sh
+    dest: "/home/packer/slack.sh"
