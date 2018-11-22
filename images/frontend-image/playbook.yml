@@ -1,10 +1,8 @@
 - hosts: all 
-  become: yes 
-  become_method: sudo
-  remote_user: packer
+  sudo: yes
 
   vars:
-    NODEJS_VERSION: 8
+    ansible_python_interpreter: "/usr/bin/python3"
     
   roles:
     - installNode
@@ -13,3 +11,4 @@
     - setupVault
     - filebeatConfig
     - metricbeatConfig
+    - setupSlack

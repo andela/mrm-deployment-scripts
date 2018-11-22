@@ -1,16 +1,21 @@
 ---
-- name: Add gpg key for node
-  apt_key:
-    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
-    state: present
-- name: Add nodeJS repository
-  apt_repository:
-    repo: "deb https://deb.nodesource.com/node_{{ NODEJS_VERSION }}.x {{ ansible_distribution_release }} main"
-    state: present
-    update_cache: yes
-- name: Install nodejs
+- name: install linux dependencies
   apt:
-    name: nodejs
-    state: present
-- name: Install yarn
-  command: npm install yarn -g
+    name: ['build-essential', 'libssl-dev']
+    update_cache: yes
+
+- name: Install nvm
+  become: yes
+  become_user: packer
+  become_method: sudo
+  shell: |
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+    creates=/home/packer/.nvm/nvm.sh
+
+- name: Install node and set version
+  become: yes
+  become_user: packer
+  become_method: sudo
+  shell: |
+    /bin/bash -c "source ~/.nvm/nvm.sh && nvm install node &&  npm install yarn -g"
+    creates=/home/packer/.nvm/alias
