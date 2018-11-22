@@ -13,10 +13,12 @@
 
 - name: install libsm6 and libxrender1
   apt:
-    name: ['libsm6', 'libxrender1']
+    name: ['libsm6', 'libxrender1', 'libfontconfig1']
     state: present
     update_cache: yes
 
+- include_tasks: wkhtmltopdf_install.yml
+    
 - name: upgrade pip
   pip:
     name: pip
