@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![Infrastructure Image](docs/images/GCP-architecture.png)
+![Infrastructure Image](docs/images/GCP-architecture2.png)
 
 ## Table of Contents
 - [Setup Service Account](docs/service-account-creation.md)
