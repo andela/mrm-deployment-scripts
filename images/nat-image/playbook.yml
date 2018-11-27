@@ -1,0 +1,10 @@
+- hosts: all 
+  become: yes 
+  become_method: sudo
+  remote_user: packer
+
+  vars:
+    NODEJS_VERSION: 8
+    
+  roles:
+    - natConfig

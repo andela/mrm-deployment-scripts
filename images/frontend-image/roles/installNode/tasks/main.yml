@@ -1,0 +1,21 @@
+---
+- name: install linux dependencies
+  apt:
+    name: ['build-essential', 'libssl-dev']
+    update_cache: yes
+
+- name: Install nvm
+  become: yes
+  become_user: packer
+  become_method: sudo
+  shell: |
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+    creates=/home/packer/.nvm/nvm.sh
+
+- name: Install node and set version
+  become: yes
+  become_user: packer
+  become_method: sudo
+  shell: |
+    /bin/bash -c "source ~/.nvm/nvm.sh && nvm install node &&  npm install yarn -g"
+    creates=/home/packer/.nvm/alias

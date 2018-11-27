@@ -28,6 +28,14 @@ server {
   location / {
     try_files $uri /index.html;
   }
+  location /staging {
+    try_files $uri /index.html;
+    alias /home/packer/mrm_front/dist;
+  }
+  location /prod {
+    try_files $uri /index.html;
+    alias /home/packer/mrm_front/dist;
+  }
   # Do not cache sw.js, required for offline-first updates.
   location /sw.js {
       add_header Cache-Control "no-cache";

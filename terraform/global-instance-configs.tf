@@ -13,7 +13,7 @@ resource "google_compute_instance" "mrm-vault-server-instance" {
   }
 
   metadata {
-    environment             = "${lookup(var.environment, "production")}"
+    environment             = "${var.vault_environment}"
   }
 
 

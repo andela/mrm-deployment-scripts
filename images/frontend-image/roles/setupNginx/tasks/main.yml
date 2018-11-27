@@ -1,0 +1,33 @@
+---
+- name: add nginx repository
+  apt_repository: 
+    repo: 'ppa:nginx/stable'
+    codename: xenial
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: create a custom gzip.conf 
+  template:
+    src: ../../../gzip.conf 
+    dest: /etc/nginx/conf.d/gzip.conf
+
+- name: create a custom nginx configuration
+  template:
+    src: ../../../nginx-config
+    dest: /etc/nginx/sites-available/default
+
+- name: create symbolic link for nginx
+  become: yes
+  file:
+    src: /etc/nginx/sites-available/default 
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+
+- file:
+    path: /etc/nginx/sites-available/default
+    owner: root
+    group: root
