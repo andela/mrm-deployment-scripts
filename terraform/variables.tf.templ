@@ -40,8 +40,8 @@ variable "startup_scripts" {
   default = {
     nat-server      = "sudo sysctl -w net.ipv4.ip_forward=1; sudo iptables -t nat -A POSTROUTING -o ens4 -j MASQUERADE"
     vault-server    = "sudo su - packer -c '. /home/packer/startup-script.sh'"
-    frontend-server = "sudo su - packer -c '. ~/startup-script.sh'"
-    backend-server  = "sudo su - packer -c '. ~/startup-script.sh'"
+    frontend-server = "sudo su - packer -c '. /home/packer/startup-script.sh'"
+    backend-server  = "sudo su - packer -c '. /home/packer/startup-script.sh'"
   }
 }
 
@@ -159,4 +159,8 @@ variable "prefix" {
 
 variable "hosts" {
   type = "map"
+}
+
+variable "base_url" {
+  type = "string"
 }

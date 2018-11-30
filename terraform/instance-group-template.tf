@@ -25,6 +25,7 @@ resource "google_compute_instance_template" "frontend-template-staging" {
     FIREBASE_PROJECT_ID     = "${var.firebase_project_id}"
     FIREBASE_DATABASE_NAME  = "${var.firebase_database_name}"
     FIREBASE_BUCKET         = "${var.firebase_bucket}"
+    BASE_URL                = "${var.base_url}"
   }
 
   network_interface {
@@ -70,6 +71,7 @@ resource "google_compute_instance_template" "frontend-template-prod" {
     FIREBASE_PROJECT_ID     = "${var.firebase_project_id}"
     FIREBASE_DATABASE_NAME  = "${var.firebase_database_name}"
     FIREBASE_BUCKET         = "${var.firebase_bucket}"
+    BASE_URL                = "${var.base_url}"
   }
 
   network_interface {

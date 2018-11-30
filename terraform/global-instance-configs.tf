@@ -38,7 +38,7 @@ resource "google_compute_instance" "nat-gateway-instance" {
 
   boot_disk {
     initialize_params {
-      image = "mrm-nat-gateway-image"
+      image = "https://www.googleapis.com/compute/v1/projects/learning-map-app/global/images/mrm-nat-gw-image"
     }
   }
 
