@@ -22,6 +22,8 @@ function store_instance_variables {
     fi
   echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
   echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
+
+  echo "BASE_URL=\"$(get_instance_metadata "BASE_URL")\"" >> .env
   
   echo "FIREBASE_API_KEY=\"$(get_instance_metadata "FIREBASE_API_KEY")\"" >> .env
   echo "FIREBASE_PROJECT_ID=\"$(get_instance_metadata "FIREBASE_PROJECT_ID")\"" >> .env
