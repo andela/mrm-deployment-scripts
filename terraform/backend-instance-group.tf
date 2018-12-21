@@ -68,7 +68,6 @@ resource "google_compute_backend_service" "backend-lb-prod" {
   protocol    = "HTTP"
   timeout_sec = 120
   enable_cdn  = false
-  count					  = 0
 
   backend {
     group = "${google_compute_instance_group_manager.backend-instance-group-prod.instance_group}"
@@ -83,7 +82,6 @@ resource "google_compute_instance_group_manager" "backend-instance-group-prod" {
   instance_template  = "${google_compute_instance_template.backend-template-prod.self_link}"
   zone 				 = "${var.gcloud_zone}"
   update_strategy    = "NONE"
-  count				 = 0
   
   named_port {
     name = "http"
@@ -102,7 +100,6 @@ resource "google_compute_autoscaler" "backend-autoscaler-prod" {
   name 		= "${var.platform_name}-backend-autoscaler-prod"
   zone 		= "${var.gcloud_zone}"
   target 	= "${google_compute_instance_group_manager.backend-instance-group-prod.self_link}"
-  count 	= 0
   autoscaling_policy = {
     max_replicas    = 4
     min_replicas    = 2
