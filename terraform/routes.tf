@@ -51,20 +51,20 @@ resource "google_compute_url_map" "url-map-fe" {
   name            = "${var.platform_name}-url-map-fe"
   default_service = "${google_compute_backend_service.frontend-lb-staging.self_link}"
 
-#  host_rule {
-#    hosts        = ["${lookup(var.hosts, "frontend_prod_host")}"]
-#    path_matcher = "prodpaths"
-#  }
-#
-#  path_matcher {
-#    name            = "prodpaths"
-#    default_service = "${google_compute_backend_service.frontend-lb-prod.self_link}"
-#
-#    path_rule {
-#      paths   = ["/*"]
-#      service = "${google_compute_backend_service.frontend-lb-prod.self_link}"
-#    }
-#  }
+  host_rule {
+    hosts        = ["${lookup(var.hosts, "frontend_prod_host")}"]
+    path_matcher = "prodpaths"
+  }
+
+  path_matcher {
+    name            = "prodpaths"
+    default_service = "${google_compute_backend_service.frontend-lb-prod.self_link}"
+
+    path_rule {
+      paths   = ["/*"]
+      service = "${google_compute_backend_service.frontend-lb-prod.self_link}"
+    }
+  }
 
   host_rule {
     hosts        = ["${lookup(var.hosts, "frontend_staging_host")}"]
@@ -140,19 +140,19 @@ resource "google_compute_url_map" "url-map-be" {
     }
   }
 
-#  host_rule{ 
-#    hosts        = ["${lookup(var.hosts, "backend_prod_host")}"]
-#    path_matcher = "prodpaths"
-#  }
-#
-#  path_matcher {
-#    name            = "prodpaths"
-#    default_service = "${google_compute_backend_service.backend-lb-prod.self_link}"
-#
-#    path_rule {
-#      paths   = ["/*"]
-#      service = "${google_compute_backend_service.backend-lb-prod.self_link}"
-#    }
-#  }
+  host_rule{ 
+    hosts        = ["${lookup(var.hosts, "backend_prod_host")}"]
+    path_matcher = "prodpaths"
+  }
+
+  path_matcher {
+    name            = "prodpaths"
+    default_service = "${google_compute_backend_service.backend-lb-prod.self_link}"
+
+    path_rule {
+      paths   = ["/*"]
+      service = "${google_compute_backend_service.backend-lb-prod.self_link}"
+    }
+  }
 
 }

@@ -49,7 +49,6 @@ resource "google_compute_instance_template" "frontend-template-prod" {
   instance_description    = "MRM Frontend Instance"
   machine_type            = "n1-standard-1"
   metadata_startup_script = "${lookup(var.startup_scripts,"frontend-server")}"
-  count					  = 0
 
   disk {
     boot         = "true"
@@ -136,7 +135,6 @@ resource "google_compute_instance_template" "backend-template-prod" {
   instance_description    = "MRM backend Instance"
   machine_type            = "n1-standard-1"
   metadata_startup_script = "${lookup(var.startup_scripts,"backend-server")}"
-  count					  = 0
 
   disk {
     boot         = "true"
