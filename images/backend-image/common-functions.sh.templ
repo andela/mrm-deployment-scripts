@@ -1,0 +1,60 @@
+#!/bin/bash
+
+function get_instance_metadata {
+  local name="$1"
+
+  curl -s -H "Metadata-Flavor: Google" \
+    "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
+}
+
+function get_vault_address {
+  echo $(get_instance_metadata "mrm_vault_server_IP")
+}
+
+function login_vault {
+    if [[ $(get_instance_metadata "environment") == "production" ]] || [[ $(get_instance_metadata "environment") == "staging" ]]; then
+        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/production_mrm_vault_auth_token -H "Metadata-Flavor: Google")
+    elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
+        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/sandbox_mrm_vault_auth_token -H "Metadata-Flavor: Google")
+    fi
+  export VAULT_ADDR="http://$(get_vault_address):8200"
+
+  echo "---Authenticating on Vault Server---"
+
+  vault login ${vault_token}
+}
+
+function get_db_username {
+  echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_username)
+}
+function get_db_password {
+  echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_password)
+}
+
+function database_url {
+    if [ $(get_instance_metadata "environment") == "production" ]; then
+        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/postgres"
+    elif [ $(get_instance_metadata "environment") == "staging" ]; then
+        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/staging"
+    elif [ $(get_instance_metadata "environment") == "sandbox" ]; then
+        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/sandbox"
+    fi
+}
+
+function export_variables {
+    export DATABASE_URL="$(database_url)"
+    export DATABASE_PASSWORD="$(get_db_password)"
+    export DATABASE_USERNAME="$(get_db_username)"
+    export DATABASE_IP=$(DATABASE_IP)
+    export BACKUPS_PATH=$(BACKUPS_PATH)
+}
+
+function main {
+    login_vault
+    get_db_username
+    get_db_password
+    database_url
+    export_variables
+}
+
+main "$@"

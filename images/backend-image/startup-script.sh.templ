@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
-function get_instance_metadata {
-  local name="$1"
-
-  curl -s -H "Metadata-Flavor: Google" \
-    "http://metadata.google.internal/computeMetadata/v1/instance/attributes/${name}"
-}
+source /home/packer/common-functions.sh
 
 function get_database {
+    if [[ $(get_instance_metadata "environment") == "staging" ]]; then
         gcloud sql databases list --instance=converge-postgres | grep staging
+    elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
+        gcloud sql databases list --instance=converge-postgres | grep sandbox
+    fi
 }
 
 function store_instance_variables {
@@ -20,11 +19,12 @@ function store_instance_variables {
     elif [[ $(get_instance_metadata "environment") == "staging" ]]; then
         echo "MRM_URL=\"$(get_instance_metadata "MRM_URL_STAGING")\"" >> .env
         echo "MRM_API_URL=\"$(get_instance_metadata "MRM_API_URL_STAGING")\"" >> .env
-		if [[ $(get_database) == '' ]]; then
+		if [[ $(get_database) == '' ]] && [[ $(get_instance_metadata "environment") == "staging" ]]; then
 			echo "Creating staging database..."
         	gcloud sql databases create staging --instance=converge-postgres
-		else
-			echo "Staging database exists..."
+		elif [[ $(get_database) == '' ]] && [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
+			echo "Creating sandbox database..."
+        	gcloud sql databases create sandbox --instance=converge-postgres
 		fi
     elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
         echo "MRM_URL=\"$(get_instance_metadata "MRM_URL_SANDBOX")\"" >> .env
@@ -48,21 +48,6 @@ function create_repo_key {
   fi
   #Change permissions on key file to read only
   chmod 600 $HOME/.ssh/id_rsa
-}
-function get_vault_address {
-  echo $(get_instance_metadata "mrm_vault_server_IP")
-}
-function login_vault {
-    if [[ $(get_instance_metadata "environment") == "production" ]] || [[ $(get_instance_metadata "environment") == "staging" ]]; then
-        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/production_mrm_vault_auth_token -H "Metadata-Flavor: Google")
-    elif [[ $(get_instance_metadata "environment") == "sandbox" ]]; then
-        vault_token=$(curl http://metadata.google.internal/computeMetadata/v1/project/attributes/sandbox_mrm_vault_auth_token -H "Metadata-Flavor: Google")
-    fi
-  export VAULT_ADDR="http://$(get_vault_address):8200"
-
-  echo "---Authenticating on Vault Server---"
-
-  vault login ${vault_token}
 }
 function clone_repo {
   echo "---cloning repo---"
@@ -104,21 +89,8 @@ function install_project_dependencies {
 function count_versions {
   echo $(find alembic/versions/*.py | wc -l)
 }
-function get_db_username {
-  echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_username)
-}
-function get_db_password {
-  echo $(vault read -format="json" mrm/postgresdb | jq -r .data.mrm_db_password)
-}
 function retrieve_secret_key {
   echo $(vault read -format="json" mrm/keys | jq -r .data.mrm_api_secret_key)
-}
-function database_url {
-    if [ $(get_instance_metadata "environment") == "production" ]; then
-        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/postgres"
-    else
-        echo "postgresql://$(get_db_username):$(get_db_password)@$(DATABASE_IP):5432/staging"
-    fi
 }
 function setup_env_variables {
   echo "---Setting env variables---"
@@ -169,6 +141,9 @@ function exit-on-failure {
 function successful-startup {
   sudo bash /home/packer/slack.sh "Success" ${HOSTNAME}
 }
+function start-cron-job {
+  . /home/packer/start-cron-job.sh
+}
 function main {
   login_vault
   create_repo_key
@@ -186,6 +161,7 @@ function main {
   sudo service metricbeat start
   sudo service filebeat start
   successful-startup
+  start-cron-job
 }
 export HOSTNAME=$BACKEND_HOST
 main "$@"

@@ -17,6 +17,23 @@
     state: present
     update_cache: yes
 
+- name: Add postgres-9.6 repository
+  apt_repository:
+    repo: "deb https://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
+    state: present
+    update_cache: yes
+
+- name: Add postgres-9.6 apt key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: install postgres-9.6
+  apt:
+    name: ['postgresql-9.6']
+    state: present
+    update_cache: yes
+
 - include_tasks: wkhtmltopdf_install.yml
     
 - name: upgrade pip
