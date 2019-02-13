@@ -32,6 +32,7 @@ function store_instance_variables {
     fi
     echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
     echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
+    echo "MRM_PUSH_URL=\"$(get_instance_metadata "MRM_PUSH_URL")\"" >> .env
 }
 
 function create_repo_key {

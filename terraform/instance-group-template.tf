@@ -112,6 +112,7 @@ resource "google_compute_instance_template" "backend-template-staging" {
     ANDELA_API_URL          = "${var.andela_api_url}"
     mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
     environment             = "${var.template_environment}"
+    MRM_PUSH_URL            = "${var.push_url}"
   }
 
   network_interface {
@@ -153,6 +154,7 @@ resource "google_compute_instance_template" "backend-template-prod" {
     ANDELA_API_URL          = "${var.andela_api_url}"
     mrm_vault_server_IP     = "${lookup(var.static_ips, "vault-server")}"
     environment             = "production"
+    MRM_PUSH_URL            = "${var.push_url}"
   }
 
   network_interface {

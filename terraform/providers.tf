@@ -1,4 +1,5 @@
 provider "google" {
+  version     = "<= 1.18"
   credentials = "${var.service_account_path}"
   project     = "${var.gcloud_project}"
   region      = "${var.gcloud_region}"
