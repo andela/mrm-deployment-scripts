@@ -3,5 +3,7 @@
 .vscode/
 gke/*.json
 k8s/*.json
-gke/.terraform/*
-gke/terraform-init
+.terraform/*
+terraform-init
+terraform.tfstate
+terraform.tfstate.backup
