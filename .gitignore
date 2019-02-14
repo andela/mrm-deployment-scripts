@@ -1,6 +1,7 @@
 *.json
 .DS_Store
 .vscode/
+secrets/*
 gke/*.json
 k8s/*.json
 .terraform/*
