@@ -33,6 +33,9 @@ function store_instance_variables {
     echo "ANDELA_LOGIN_URL=\"$(get_instance_metadata "ANDELA_LOGIN_URL")\"" >> .env
     echo "ANDELA_API_URL=\"$(get_instance_metadata "ANDELA_API_URL")\"" >> .env
     echo "MRM_PUSH_URL=\"$(get_instance_metadata "MRM_PUSH_URL")\"" >> .env
+    echo "API_KEY=\"$(get_instance_metadata "API_KEY")\"" >> .env
+    echo "OOATH2_CLIENT_ID=\"$(get_instance_metadata "OOATH2_CLIENT_ID")\"" >> .env
+    echo "OOATH2_CLIENT_SECRET=\"$(get_instance_metadata "OOATH2_CLIENT_SECRET")\"" >> .env
 }
 
 function create_repo_key {
