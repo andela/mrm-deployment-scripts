@@ -1,0 +1,57 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+spec:
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  loadBalancerIP: ${regional_static_ip}
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: converge-sandbox-ingress
+  namespace: converge
+  labels:
+    app: converge-sandbox
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+  - host: ${frontend_domain_name}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: converge-front
+          servicePort: http
+  - host: ${backend_domain_name}
+    http:
+      paths:
+      - path: /mrm
+        backend:
+          serviceName: converge-api
+          servicePort: http
+  tls:
+    - hosts:
+      - ${frontend_domain_name}
+      - ${backend_domain_name}
+      secretName: converge-tls-secret
+
+
