@@ -30,3 +30,21 @@ variable "frontend_container_port" {
     type        ="string"
 }
 
+variable "ingress_template_file" {
+    type        = "string"
+}
+
+variable "regional_static_ip" {
+    type        = "string"
+}
+
+variable "frontend_domain_name" {
+    type        = "string"
+}
+
+variable "backend_domain_name" {
+    type        = "string"
+}
+
+
+
