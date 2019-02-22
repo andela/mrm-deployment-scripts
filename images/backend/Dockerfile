@@ -17,7 +17,6 @@ RUN chown root:root wkhtmltox/bin/wkhtmltopdf && \
 	chmod a+x wkhtmltox/bin/wkhtmltopdf && \
 	cp wkhtmltox/bin/wkhtmltopdf /usr/local/bin/
 
-
 RUN chown root:root wkhtmltox/bin/wkhtmltoimage && \
 	chmod a+x wkhtmltox/bin/wkhtmltoimage && \
 	cp wkhtmltox/bin/wkhtmltoimage /usr/local/bin/
