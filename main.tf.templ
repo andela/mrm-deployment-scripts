@@ -1,0 +1,26 @@
+module "gke" {
+    source                  = "./gke"
+    project                 = "$(project)"
+    region                  = "$(region)"
+    zone                    = "$(zone)" 
+    environment             = "$(environment)"
+    prefix                  = "$(prefix)"
+    credentials             = "$(credentials)"
+    bucket                  = "$(bucket)"
+}
+
+module "k8s" {
+    source                  = "./k8s"
+    credentials_file        = "$(credentials_file)"
+    namespace               = "$(namespace)"
+    backend_name            = "$(backend_name)"
+    backend_image           = "$(backend_image)"
+    backend_container_port  = "$(backend_container_port)"
+    frontend_name           = "$(frontend_name)"
+    frontend_image          = "$(frontend_image)"
+    frontend_container_port = "$(frontend_container_port)"
+    ingress_template_file   = "$(ingress_template_file)"
+    regional_static_ip      = "$(regional_static_ip)"
+    frontend_domain_name    = "$(frontend_domain_name)"
+    backend_domain_name     = "$(backend_domain_name)"
+}
