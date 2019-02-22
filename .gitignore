@@ -2,6 +2,8 @@
 .DS_Store
 .vscode/
 secrets/*
+values.sh
+main.tf
 gke/*.json
 k8s/*.json
 .terraform/*
