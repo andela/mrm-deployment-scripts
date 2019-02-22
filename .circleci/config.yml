@@ -1,0 +1,168 @@
+defaults: &defaults
+  docker:
+    - image: ${CIRCLECI_IMAGE}
+      auth:
+        username: _json_key
+        password: ${GOOGLE_CREDS}
+      environment:
+        GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/google-service-key.json
+
+set_workspace: &set_workspace
+  working_directory: ~/repo
+
+gcloud_auth: &gcloud_auth
+  run:
+    name: setup gcloud
+    command: |
+      if [ "$CIRCLE_BRANCH" == master  ] || [ "$CIRCLE_BRANCH" == develop ]; then
+        touch google-service-key.json
+        echo $GOOGLE_CREDENTIALS_STAGING | base64 --decode >> google-service-key.json 
+        gcloud auth activate-service-account --key-file google-service-key.json
+        gcloud --quiet config set project ${GOOGLE_PROJECT_ID_STAGING}
+        gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      else
+        touch google-service-key.json
+        echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode >> google-service-key.json 
+        gcloud auth activate-service-account --key-file google-service-key.json
+        gcloud --quiet config set project ${GOOGLE_PROJECT_ID_SANDBOX}
+        gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      fi
+
+version: 2
+jobs:
+  build_circleci_image:
+    <<: *defaults
+    <<: *set_workspace
+    steps:
+      - checkout
+      - *gcloud_auth
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: check circleci base image
+          command: |
+            cd ~/repo/
+            if [ "$CIRCLE_BRANCH" != master ]; then
+              # compare current branch against the base branch
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/circleci/Dockerfile)
+              echo $image
+              if [[ ${image} == "images/circleci/Dockerfile" ]]; then
+                docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_STAGING | base64 --decode )" https://gcr.io
+                docker build -f images/circleci/Dockerfile -t ${CIRCLECI_IMAGE} .
+                docker push ${CIRCLECI_IMAGE}
+              else
+                echo "No change detected"
+              fi
+            else
+              # checkout to different branch to trigger git diff
+              git checkout develop && git checkout $CIRCLE_BRANCH
+              # compare the current revision against the previous
+              image=$(git diff HEAD@{1} images/circleci/Dockerfile | cat)
+              if [ -n "$image" ]; then
+                docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_STAGING | base64 --decode )" https://gcr.io
+                docker build -f images/circleci/Dockerfile -t ${CIRCLECI_IMAGE} .
+                docker push ${CIRCLECI_IMAGE}
+              fi
+            fi
+
+  build_application_base_images:
+    <<: *defaults
+    <<: *set_workspace
+    steps:
+      - checkout
+      - *gcloud_auth
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: backend base image
+          command: |
+            cd ~/repo/
+            if [ "$CIRCLE_BRANCH" == master ]; then
+              # compare current branch against base branch
+              image=$(git diff HEAD@{1} images/backend/Dockerfile | cat)
+              echo $image
+              GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
+              if [[ -n "$image" ]]; then
+                docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_PRODUCTION | base64 --decode)" https://gcr.io
+                docker build -f images/backend/Dockerfile -t ${BACKEND_BASE_IMAGE_PRODUCTION}:$GIT_HASH .
+                docker push ${BACKEND_BASE_IMAGE_PRODUCTION}:$GIT_HASH
+                touch current_version
+                echo ${GIT_HASH} > current_version
+                gsutil cp current_version gs://${BACKEND_BASE_IMAGE_VERSION_PATH_PRODUCTION}
+              else
+                echo "No change detected"
+              fi
+            elif [ "$CIRCLE_BRANCH" == develop ]; then
+              # compare current branch against base branch
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile)
+              echo $image
+              GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
+              if [[ ${image} == "images/backend/Dockerfile" ]]; then
+                docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_STAGING | base64 --decode)" https://gcr.io
+                docker build -f images/backend/Dockerfile -t ${BACKEND_BASE_IMAGE_STAGING}:$GIT_HASH .
+                docker push ${BACKEND_BASE_IMAGE_STAGING}:$GIT_HASH
+                touch current_version
+                echo ${GIT_HASH} > current_version
+                gsutil cp current_version gs://${BACKEND_BASE_IMAGE_VERSION_PATH_STAGING}
+              else
+                echo "No change detected"
+              fi
+            else
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile)
+              echo $image
+              GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
+              if [[ ${image} == "images/backend/Dockerfile" ]]; then
+                docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode)" https://gcr.io
+                docker build -f images/backend/Dockerfile -t ${BACKEND_BASE_IMAGE_SANDBOX}:$GIT_HASH .
+                docker push ${BACKEND_BASE_IMAGE_SANDBOX}:$GIT_HASH
+                touch current_version
+                echo ${GIT_HASH} > current_version
+                gsutil cp current_version gs://${BACKEND_BASE_IMAGE_VERSION_PATH_SANDBOX}
+              else
+                echo "No change detected"
+              fi
+            fi
+
+  build:
+    <<: *defaults
+    <<: *set_workspace
+    steps:
+      - checkout
+      - *gcloud_auth
+      - run:
+          name: create terraform values
+          command: |
+            mkdir -p secrets 
+            echo $CERTIFICATE | base64 --decode > secrets/ssl_andela_certificate.crt
+            echo $KEY | base64 --decode > secrets/ssl_andela_key.key
+            cat secrets/ssl_andela_certificate.crt
+            cat secrets/ssl_andela_key.key
+            . supply_values.sh
+
+      - run:
+          name: run terraform
+          command: |
+            . .circleci/deploy_to_kubernetes.sh
+            deploy $(echo $CIRCLE_BRANCH)
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_circleci_image
+      - build_application_base_images:
+          requires:
+            - build_circleci_image
+          filters:
+            branches:
+              only:
+                - develop
+                - master
+      - build:
+          requires:
+            - build_application_base_images
+          filters:
+            branches:
+              only:
+                - develop
+                - master
