@@ -156,6 +156,7 @@ workflows:
           filters:
             branches:
               only:
+                - k8s-sandbox
                 - develop
                 - master
       - build:
@@ -164,5 +165,6 @@ workflows:
           filters:
             branches:
               only:
+                - k8s-sandbox
                 - develop
                 - master
