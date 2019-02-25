@@ -25,3 +25,4 @@ secrets/
 images/shared/*.yml
 images/frontend-image/roles/filebeatConfig/templates
 images/frontend-image/roles/metricbeatConfig/templates
+/tests/.kitchen

@@ -1,0 +1,8 @@
+---
+lockfile_version: 1
+depends:
+- name: cis-dil-benchmark
+  resolved_source:
+    url: https://github.com/dev-sec/cis-dil-benchmark/archive/master.tar.gz
+    sha256: 6c7766c49e92bf6147ca713be272b09e7af758db5db04b23b2c1906a67acf58d
+  version_constraints: []
