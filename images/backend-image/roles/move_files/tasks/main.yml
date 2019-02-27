@@ -3,8 +3,11 @@
 
 - name: move startup file
   template:
-    src: ../../../startup-script.sh
-    dest: /home/packer/startup-script.sh
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {src: '../../../common-functions.sh',dest: '/home/packer/common-functions.sh'}
+    - {src: '../../../startup-script.sh',dest: '/home/packer/startup-script.sh'}
 
 - name: move supervisor script
   template:
@@ -15,4 +18,14 @@
   template:
     src: ../../../shared/slack.sh
     dest: /home/packer/slack.sh
+
+- name: move backup files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - {src: '../../../backup.sh',dest: '/home/packer/backup.sh'}
+    - {src: '../../../start-cron-job.sh',dest: '/home/packer/start-cron-job.sh'}
+    - {src: '../../../cronjob',dest: '/home/packer/cronjob'}
+    - {src: '../../../validate.sh',dest: '/home/packer/validate.sh'}
     

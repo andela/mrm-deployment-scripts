@@ -18,6 +18,7 @@ terraform/terraform.tfstate.backup
 terraform/terraform.tfstate
 terraform/.terraform/
 terraform/variables.tf
+images/backend-image/common-functions.sh
 images/backend-image/startup-script.sh
 images/frontend-image/startup-script.sh
 .vscode/
