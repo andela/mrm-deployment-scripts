@@ -47,4 +47,22 @@ variable "backend_domain_name" {
 }
 
 
+variable "microservice_name" {
+    type        = "string"
+}
 
+variable "microservice_image" {
+    type        = "string"
+}
+
+variable "microservice_container_port" {
+    type        = "string"
+}
+
+variable "microservice_domain_name" {
+    type        = "string"
+}
+
+variable "microservice_namespace" {
+    type        = "string"
+}

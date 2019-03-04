@@ -9,6 +9,7 @@ data "template_file" "key" {
 resource "kubernetes_secret" "tls_secrets" {
   metadata {
     name         = "converge-tls-secret"
+    namespace       = "${kubernetes_namespace.namespace.id}"
   }
   type           = "kubernetes.io/tls"
   data {
