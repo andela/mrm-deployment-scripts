@@ -44,7 +44,7 @@ jobs:
             cd ~/repo/
             if [ "$CIRCLE_BRANCH" != master ]; then
               # compare current branch against the base branch
-              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/circleci/Dockerfile)
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/circleci/Dockerfile || true)
               echo $image
               if [[ ${image} == "images/circleci/Dockerfile" ]]; then
                 docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_STAGING | base64 --decode )" https://gcr.io

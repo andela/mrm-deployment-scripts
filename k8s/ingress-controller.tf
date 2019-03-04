@@ -2,10 +2,11 @@ data "template_file" "ingress" {
   template = "${file("${var.ingress_template_file}")}"
 
   vars {
-    namespace            = "${var.namespace}"
-    regional_static_ip   = "${var.regional_static_ip}"
-    frontend_domain_name = "${var.frontend_domain_name}"
-    backend_domain_name  = "${var.backend_domain_name}"
+    namespace                 = "${var.namespace}"
+    regional_static_ip        = "${var.regional_static_ip}"
+    frontend_domain_name      = "${var.frontend_domain_name}"
+    backend_domain_name       = "${var.backend_domain_name}"
+    microservice_domain_name  = "${var.microservice_domain_name}"
   }
 }
 

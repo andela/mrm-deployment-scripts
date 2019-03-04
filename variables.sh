@@ -23,6 +23,11 @@ create_variables (){
     backend_domain_name
     tls_certificate_file
     tls_key_file
+    microservice_name
+    microservice_image
+    microservice_container_port
+    microservice_domain_name
+    microservice_namespace
     )
 }
 create_variables
