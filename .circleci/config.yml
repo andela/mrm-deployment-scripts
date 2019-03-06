@@ -94,7 +94,7 @@ jobs:
               fi
             elif [ "$CIRCLE_BRANCH" == develop ]; then
               # compare current branch against base branch
-              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile)
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile || true)
               echo $image
               GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
               if [[ ${image} == "images/backend/Dockerfile" ]]; then
@@ -108,7 +108,7 @@ jobs:
                 echo "No change detected"
               fi
             else
-              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile)
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile || true)
               echo $image
               GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
               if [[ ${image} == "images/backend/Dockerfile" ]]; then
