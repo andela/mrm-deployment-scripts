@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "microservice" {
                     }
                     
                     image_pull_policy 	= "Always"
-                    command             = ["/app/docker/prod/start_gunicorn.sh"]
+                    command             = ["/usr/bin/supervisord"]
                 }
             }
         }
