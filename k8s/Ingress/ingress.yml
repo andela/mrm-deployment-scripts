@@ -44,7 +44,7 @@ spec:
   - host: ${backend_domain_name}
     http:
       paths:
-      - path: /mrm
+      - path: /
         backend:
           serviceName: converge-api
           servicePort: http
