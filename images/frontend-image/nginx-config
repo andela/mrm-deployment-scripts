@@ -12,6 +12,10 @@ server {
   index index.html index.htm;
 
   server_name _;
+  if ($http_x_forwarded_proto = "http") { 
+    return 301 https://$host$request_uri; 
+  }
+  
   large_client_header_buffers 4 16k;
   location /server-status {
     stub_status on;

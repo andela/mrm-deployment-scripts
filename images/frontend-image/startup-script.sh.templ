@@ -108,17 +108,25 @@ function retrieve_repo_key {
   chmod 600 $HOME/.ssh/id_rsa
 
 }
+
+function overideNginx {
+  sudo mkdir /etc/systemd/system/nginx.service.d
+  sudo printf "[Service]\nExecStartPost=/bin/sleep 0.1\n" > override.conf
+  sudo mv override.conf /etc/systemd/system/nginx.service.d/
+  sudo systemctl daemon-reload
+  sudo systemctl restart nginx
+}
+
 function start_services {
     echo "---setting up Beats---"
-
-    sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["$(ELASTICSEARCH_HOST):9200"]"
+  sudo filebeat setup --template -E output.logstash.enabled=false -E "output.elasticsearch.hosts=["$(ELASTICSEARCH_HOST):9200"]"
   sudo metricbeat setup
     echo "---Starting metricbeat---"
   sudo service metricbeat start
     echo "---Starting filebeat---"
   sudo service filebeat start
     echo "---reStarting NGINX---"
-  sudo systemctl restart nginx
+  overideNginx
 }
 
 function exit-on-failure {
