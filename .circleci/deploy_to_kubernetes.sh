@@ -29,7 +29,7 @@ deploy(){
 		terraform apply -target module.k8s -auto-approve
 		# update the state
 		gsutil cp terraform.tfstate gs://$PRODUCTION_BUCKET/$PRODUCTION_PREFIX/default.tfstate
-	elif [ "$CIRCLE_BRANCH" == develop ]; then
+	elif [ "$CIRCLE_BRANCH" == ch-build-ci-pipeline-164361532 ]; then
 		# set credentials
 		echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode > secrets/google-creds-sandbox.json
 		echo $GOOGLE_CREDENTIALS_STAGING | base64 --decode > secrets/google-creds-staging.json

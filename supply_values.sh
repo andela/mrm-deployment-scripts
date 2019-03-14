@@ -88,7 +88,7 @@ if [ "$CIRCLE_BRANCH" == master ]; then
     push_service_version=$( gsutil cp gs://$PRODUCTION_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export PRODUCTION_MICROSERVICE_IMAGE=$PRODUCTION_MICROSERVICE_IMAGE:$push_service_version
     printenv | grep PRODUCTION_ | sed "s/^PRODUCTION_\(.*\)=/\L&/" | sed "s/production_//" > values.sh
-elif [ "$CIRCLE_BRANCH" == develop ]; then
+elif [ "$CIRCLE_BRANCH" == ch-build-ci-pipeline-164361532 ]; then
     backend_version=$( gsutil cp gs://$STAGING_BACKEND_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export STAGING_BACKEND_IMAGE=$STAGING_BACKEND_IMAGE:$backend_version
     frontend_version=$( gsutil cp gs://$STAGING_FRONTEND_IMAGE_VERSION_PATH/current_version . && cat current_version )
