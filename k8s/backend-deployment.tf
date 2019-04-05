@@ -8,7 +8,7 @@ resource "kubernetes_deployment" "backend" {
     }
 
     spec {
-        replicas    = 3
+        replicas    = 2
 
         selector {
             match_labels {
