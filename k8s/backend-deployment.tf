@@ -8,7 +8,7 @@ resource "kubernetes_deployment" "backend" {
     }
 
     spec {
-        replicas    = 3
+        replicas    = 2
 
         selector {
             match_labels {
@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "backend" {
                     }
                     
                     image_pull_policy 	= "Always"
-                    command             = ["/usr/bin/supervisord"]
+                    command             = ["/bin/bash", "docker/prod/start_app.sh"]
                 }
                 container {
                     image               = "gcr.io/cloudsql-docker/gce-proxy:1.13"
