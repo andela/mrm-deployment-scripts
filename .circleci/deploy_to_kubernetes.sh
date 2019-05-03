@@ -13,8 +13,6 @@ deploy(){
 		echo "bucket=\"$PRODUCTION_BUCKET\"" >> terraform-init
 		echo "prefix=\"$PRODUCTION_PREFIX\"" >> terraform-init
 		echo "credentials=\"$PRODUCTION_CREDENTIALS\"" >> terraform-init
-		cat terraform-init
-		cat main.tf
 		# initilise terraform
 		terraform init -backend-config=terraform-init
 		# Get the current state
@@ -40,8 +38,6 @@ deploy(){
 		echo "bucket=\"$STAGING_BUCKET\"" >> terraform-init
 		echo "prefix=\"$STAGING_PREFIX\"" >> terraform-init
 		echo "credentials=\"$STAGING_CREDENTIALS\"" >> terraform-init
-		cat terraform-init
-		cat main.tf
 		# initilise terraform
 		terraform init -backend-config=terraform-init
 		# Get the current state
@@ -67,8 +63,6 @@ deploy(){
 		echo "bucket=\"$SANDBOX_BUCKET\"" >> terraform-init
 		echo "prefix=\"$SANDBOX_PREFIX\"" >> terraform-init
 		echo "credentials=\"$SANDBOX_CREDENTIALS\"" >> terraform-init
-		cat terraform-init
-		cat main.tf
 		# initilise terraform
 		terraform init -backend-config=terraform-init
 		# Get the current state
