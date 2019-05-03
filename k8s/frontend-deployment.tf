@@ -33,16 +33,6 @@ resource "kubernetes_deployment" "frontend" {
             name            = "http"
           }
           image_pull_policy = "Always"
-          resources {
-            requests {
-              cpu     = "100m"
-              memory  = "64Mi"
-            }
-            limits {
-              cpu     = "100m"
-              memory  = "64Mi"
-            }
-          }
           liveness_probe {
             http_get {
               path  = "/"
