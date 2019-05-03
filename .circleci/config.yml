@@ -135,8 +135,6 @@ jobs:
             mkdir -p secrets 
             echo $CERTIFICATE | base64 --decode > secrets/ssl_andela_certificate.crt
             echo $KEY | base64 --decode > secrets/ssl_andela_key.key
-            cat secrets/ssl_andela_certificate.crt
-            cat secrets/ssl_andela_key.key
             . supply_values.sh
 
       - run:

@@ -72,7 +72,6 @@ main(){
     info "building $1 scripts"
     findTemplateFiles 'TEMPLATES' $new_dir
     findAndReplaceVariables
-    cat values.sh
     rm values.sh
 }
 
