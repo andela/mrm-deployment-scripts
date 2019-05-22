@@ -96,6 +96,14 @@ elif [ "$CIRCLE_BRANCH" == develop ]; then
     push_service_version=$( gsutil cp gs://$STAGING_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export STAGING_MICROSERVICE_IMAGE=$STAGING_MICROSERVICE_IMAGE:$push_service_version
     printenv | grep STAGING_ | sed "s/^STAGING_\(.*\)=/\L&/" | sed "s/staging_//" > values.sh
+elif [ "$CIRCLE_BRANCH" == qa ]; then
+    backend_version=$( gsutil cp gs://$QA_BACKEND_IMAGE_VERSION_PATH/current_version . && cat current_version )
+    export QA_BACKEND_IMAGE=$QA_BACKEND_IMAGE:$backend_version
+    frontend_version=$( gsutil cp gs://$QA_FRONTEND_IMAGE_VERSION_PATH/current_version . && cat current_version )
+    export QA_FRONTEND_IMAGE=$QA_FRONTEND_IMAGE:$frontend_version
+    push_service_version=$( gsutil cp gs://$QA_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
+    export QA_MICROSERVICE_IMAGE=$QA_MICROSERVICE_IMAGE:$push_service_version
+    printenv | grep QA_ | sed "s/^QA_\(.*\)=/\L&/" | sed "s/qa_//" > values.sh
 else
     backend_version=$( gsutil cp gs://$SANDBOX_BACKEND_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export SANDBOX_BACKEND_IMAGE=$SANDBOX_BACKEND_IMAGE:$backend_version

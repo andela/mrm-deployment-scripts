@@ -56,6 +56,33 @@ deploy(){
 		terraform apply -target module.k8s -auto-approve
 		# update the state
 		gsutil cp terraform.tfstate gs://$STAGING_BUCKET/$STAGING_PREFIX/default.tfstate
+	elif [ "$CIRCLE_BRANCH" == qa ]; then
+	# set credentials
+		echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode > secrets/google-creds-sandbox.json
+		echo $GOOGLE_CREDENTIALS_QA | base64 --decode > secrets/google-creds-qa.json
+		# get certificates
+		gsutil cp gs://$QA_BUCKET/ssl/andela_certificate.pem secrets/ssl_andela_certificate.crt
+		gsutil cp gs://$QA_BUCKET/ssl/ssl_andela_key.key secrets/ssl_andela_key.key
+		# create terraform-init
+		echo "bucket=\"$QA_BUCKET\"" >> terraform-init
+		echo "prefix=\"$QA_PREFIX\"" >> terraform-init
+		echo "credentials=\"$QA_CREDENTIALS\"" >> terraform-init
+		cat terraform-init
+		cat main.tf
+		# initilise terraform
+		terraform init -backend-config=terraform-init
+		# Get the current state
+		gsutil cp gs://$QA_BUCKET/$QA_PREFIX/default.tfstate terraform.tfstate
+		# make terraform plan and apply the gke module
+		terraform plan -target module.gke
+		terraform apply -target module.gke -auto-approve
+		# set credentials of the kerbernetes cluster
+		gcloud container clusters get-credentials converge-$QA_ENVIRONMENT
+		# make terraform plan and apply the k8s module
+		terraform plan -target module.k8s
+		terraform apply -target module.k8s -auto-approve
+		# update the state
+		gsutil cp terraform.tfstate gs://$QA_BUCKET/$QA_PREFIX/default.tfstate
 	else
 		# set credentials
 		echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode > secrets/google-creds-sandbox.json
