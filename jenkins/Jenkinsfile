@@ -1,0 +1,26 @@
+#!groovy
+
+pipeline {
+  agent {
+    kubernetes {
+      label 'converge-deployments'
+      defaultContainer 'jnlp'
+      yamlFile 'jenkins/agent.yaml'
+    }
+  }
+
+  stages{
+    stage('deploy redis'){
+      steps {
+        container('mrm-deployment-agent'){
+          withCredentials([
+            file(credentialsId: 'deployment_scripts_env', variable: 'MRM_DEPLOYMENT_ENV_VARS')
+          ]) {
+            load "$MRM_DEPLOYMENT_ENV_VARS"
+            sh "printenv"
+          }
+        }
+      } 
+    }
+  }
+}
