@@ -6,7 +6,9 @@ values.sh
 main.tf
 gke/*.json
 k8s/*.json
+redis/variables.tf
 .terraform/*
+redis/.terraform/*
 terraform-init
 terraform.tfstate
 terraform.tfstate.backup
