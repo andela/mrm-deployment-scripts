@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: dind
+spec:
+  containers:
+    - name: mrm-deployment-agent
+      image: ${CONVERGE_GCR_PATH}/${CONVERGE_CICD_IMAGE_PATH}:latest
+      resources:
+        requests:
+          cpu: "2000m"
+          memory: "2Gi"
+        limits:
+          cpu: "2000m"
+          memory: "2Gi"
+      command:
+      - cat
+      env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+      tty: true
+    - name: dind-daemon
+      image: docker:1.12.6-dind
+      securityContext:
+          privileged: true
+      volumeMounts:
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
+  volumes:
+    - name: docker-graph-storage
+      emptyDir: {}
