@@ -24,7 +24,7 @@ resource "null_resource" "apply" {
   provisioner "local-exec" {
     command = <<EOF
 kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user $(gcloud config get-value account)
-kubectl apply -f ./Ingress/mandatory.yml
+kubectl apply -f k8s/Ingress/mandatory.yml
 echo '${data.template_file.ingress.rendered}' | kubectl apply -f -
 EOF
   }
