@@ -8,7 +8,7 @@ resource "kubernetes_limit_range" "backend" {
             type = "Pod"
 
             min {
-               cpu = "200m"
+               cpu = "50m"
                memory = "24Mi"
             }
             max {

@@ -8,7 +8,7 @@ resource "kubernetes_limit_range" "frontend" {
             type = "Pod"
 
             min {
-               cpu = "100m"
+               cpu = "50m"
                memory = "24Mi"
             }
             max {
@@ -29,7 +29,7 @@ resource "kubernetes_limit_range" "frontend" {
                 memory = "512Mi"
             }
             default_request {
-               cpu = "100m"
+               cpu = "50m"
                memory = "256Mi"
             }
             min {
