@@ -20,6 +20,12 @@ gcloud_auth: &gcloud_auth
         gcloud auth activate-service-account --key-file google-service-key.json
         gcloud --quiet config set project ${GOOGLE_PROJECT_ID_STAGING}
         gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      elif [ "$CIRCLE_BRANCH" == converge-redis ]; then
+        touch google-service-key.json
+        echo $GOOGLE_CREDENTIALS_REDIS | base64 --decode >> google-service-key.json 
+        gcloud auth activate-service-account --key-file google-service-key.json
+        gcloud --quiet config set project ${GOOGLE_PROJECT_ID_REDIS}
+        gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       else
         touch google-service-key.json
         echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode >> google-service-key.json 
@@ -107,6 +113,20 @@ jobs:
               else
                 echo "No change detected"
               fi
+            elif [ "$CIRCLE_BRANCH" == converge-redis ]; then
+              image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/redis/Dockerfile || true)
+              echo $image
+              GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
+              if [[ ${image} == "images/redis/Dockerfile" ]]; then
+                docker login -u _json_key -p "$(echo $GOOGLE_CREDENTIALS_REDIS | base64 --decode)" https://gcr.io
+                docker build -f images/redis/Dockerfile -t ${REDIS_IMAGE}:$GIT_HASH .
+                docker push ${REDIS_IMAGE}:$GIT_HASH
+                touch current_version
+                echo ${GIT_HASH} > current_version
+                gsutil cp current_version gs://${REDIS_IMAGE_VERSION_PATH}
+              else
+                echo "No change detected"
+              fi
             else
               image=$(git diff-tree --no-commit-id --name-only -r HEAD | grep images/backend/Dockerfile || true)
               echo $image
@@ -157,6 +177,7 @@ workflows:
                 - k8s-sandbox
                 - develop
                 - master
+                - converge-redis
       - build:
           requires:
             - build_application_base_images
@@ -166,3 +187,4 @@ workflows:
                 - k8s-sandbox
                 - develop
                 - master
+                - converge-redis

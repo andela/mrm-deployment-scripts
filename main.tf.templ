@@ -29,3 +29,36 @@ module "k8s" {
     microservice_domain_name    = "$(microservice_domain_name)"
     microservice_namespace      = "$(microservice_namespace)"
 }
+
+module "gke-redis" {
+    source                      = "./redis/gke-redis"
+    project                     = "$(project)"
+    region                      = "$(region)"
+    zone                        = "$(zone)" 
+    environment                 = "$(environment)"
+    prefix                      = "$(prefix)"
+    credentials                 = "$(credentials)"
+    bucket                      = "$(bucket)"
+    name                        = "$(name)"
+    username                    = "$(username)"
+    password                    = "$(password)"
+}
+
+module "k8s-redis" {
+    source                     = "./redis/k8s-redis"
+    namespace                  = "$(namespace)"
+    storage_claim              = "$(storage_claim)"
+    service_name               = "$(service_name)"
+    master_port                = "$(master_port)"
+    storage_name               = "$(storage_name)"
+    service_image              = "$(service_image)"
+    config_name                = "$(config_name)"
+    storage_provisioner        = "$(storage_provisioner)"
+    ingress_name               = "$(ingress_name)"
+    mount_path                 = "$(mount_path)"
+    config_template_file       = "$(config_template_file)"
+    ingress_file               = "$(ingress_file)"
+    host_name                  = "$(host_name)"
+    regional_static_ip         = "$(regional_static_ip)"
+    ingress_controller_file    = "$(ingress_controller_file)"
+}

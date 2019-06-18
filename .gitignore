@@ -10,3 +10,4 @@ k8s/*.json
 terraform-init
 terraform.tfstate
 terraform.tfstate.backup
+redis/.terraform/*

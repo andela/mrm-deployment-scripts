@@ -8,6 +8,7 @@ create_variables (){
     prefix
     credentials
     bucket
+    name
     source
     credentials_file
     namespace
@@ -28,6 +29,22 @@ create_variables (){
     microservice_container_port
     microservice_domain_name
     microservice_namespace
+    service_image
+    master_liveness_probe
+    storage_name
+    storage_claim
+    service_name
+    master_port
+    storage_provisioner
+    config_name
+    ingress_name
+    mount_path
+    config_template_file
+    ingress_file
+    host_name
+    username
+    password
+    ingress_controller_file
     )
 }
 create_variables

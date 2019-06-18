@@ -95,6 +95,10 @@ elif [ "$CIRCLE_BRANCH" == develop ]; then
     push_service_version=$( gsutil cp gs://$STAGING_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export STAGING_MICROSERVICE_IMAGE=$STAGING_MICROSERVICE_IMAGE:$push_service_version
     printenv | grep STAGING_ | sed "s/^STAGING_\(.*\)=/\L&/" | sed "s/staging_//" > values.sh
+elif [ "$CIRCLE_BRANCH" == converge-redis ]; then
+    redis_version=$( gsutil cp gs://$REDIS_IMAGE_VERSION_PATH/current_version . && cat current_version )
+    export REDIS_SERVICE_IMAGE=$REDIS_SERVICE_IMAGE:$redis_version
+    printenv | grep REDIS_ | sed "s/^REDIS_\(.*\)=/\L&/" | sed "s/redis_//" > values.sh
 else
     backend_version=$( gsutil cp gs://$SANDBOX_BACKEND_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export SANDBOX_BACKEND_IMAGE=$SANDBOX_BACKEND_IMAGE:$backend_version
