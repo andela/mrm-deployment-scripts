@@ -2,7 +2,7 @@
 
 deploy(){
 	touch terraform-init
-	if [ "$CIRCLE_BRANCH" == master ]; then
+	if [ "$CIRCLE_BRANCH" == master || "$CIRCLE_BRANCH" = bg-fix-production ]; then
 		# set credentials
 		echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode > secrets/google-creds-sandbox.json
 		echo $GOOGLE_CREDENTIALS_PRODUCTION | base64 --decode > secrets/google-creds-production.json
