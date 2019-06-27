@@ -52,6 +52,31 @@ deploy(){
 		terraform apply -target module.k8s -auto-approve
 		# update the state
 		gsutil cp terraform.tfstate gs://$STAGING_BUCKET/$STAGING_PREFIX/default.tfstate
+	elif [ "$CIRCLE_BRANCH" == converge-redis ]; then
+		# set credentials
+		echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode > secrets/google-creds-sandbox.json
+		echo $GOOGLE_CREDENTIALS_REDIS | base64 --decode > secrets/google-creds-redis.json
+		# get certificates
+		gsutil cp gs://$REDIS_BUCKET/ssl/andela_certificate.pem secrets/ssl_andela_certificate.crt
+		gsutil cp gs://$REDIS_BUCKET/ssl/ssl_andela_key.key secrets/ssl_andela_key.key
+		# create terraform-init
+		echo "bucket=\"$REDIS_BUCKET\"" >> terraform-init
+		echo "prefix=\"$REDIS_PREFIX\"" >> terraform-init
+		echo "credentials=\"$REDIS_CREDENTIALS\"" >> terraform-init
+		# initilise terraform
+		terraform init -backend-config=terraform-init
+		# Get the current state
+		gsutil cp gs://$REDIS_BUCKET/$REDIS_PREFIX/default.tfstate terraform.tfstate
+		# make terraform plan and apply the redis-gke module
+		terraform plan -target module.gke-redis
+		terraform apply -target module.gke-redis -auto-approve
+		# set credentials of the kerbernetes cluster
+		gcloud container clusters get-credentials converge-$REDIS_ENVIRONMENT
+		# make terraform plan and apply the k8s module
+		terraform plan -target module.k8s-redis
+		terraform apply -target module.k8s-redis -auto-approve
+		# update the state
+		gsutil cp terraform.tfstate gs://$REDIS_BUCKET/$REDIS_PREFIX/default.tfstate
 	else
 		# set credentials
 		echo $GOOGLE_CREDENTIALS_SANDBOX | base64 --decode > secrets/google-creds-sandbox.json
