@@ -1,27 +1,27 @@
 variable "project" {
-    type        ="string"
+  type = "string"
 }
 
 variable "region" {
-    type        = "string"
+  type = "string"
 }
 
 variable "zone" {
-    type        = "string"
+  type = "string"
 }
 
 variable "environment" {
-    type        = "string"
+  type = "string"
 }
 
 variable "prefix" {
-    type        = "string"
+  type = "string"
 }
 
 variable "credentials" {
-    type        = "string"
+  type = "string"
 }
 
 variable "bucket" {
-    type        = "string"
+  type = "string"
 }
