@@ -4,7 +4,7 @@ resource "kubernetes_horizontal_pod_autoscaler" "backend" {
     namespace = "${kubernetes_namespace.namespace.id}"
   }
   spec {
-    max_replicas = 4
+    max_replicas = 5
     min_replicas = 2
     target_cpu_utilization_percentage = "80"
     scale_target_ref {

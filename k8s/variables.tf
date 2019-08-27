@@ -66,3 +66,24 @@ variable "microservice_domain_name" {
 variable "microservice_namespace" {
     type        = "string"
 }
+
+
+variable "slack_microservice_name" {
+    type        = "string"
+}
+
+variable "slack_microservice_image" {
+    type        = "string"
+}
+
+variable "slack_microservice_container_port" {
+    type        = "string"
+}
+
+variable "slack_microservice_domain_name" {
+    type        = "string"
+}
+
+variable "slack_microservice_namespace" {
+    type        = "string"
+}

@@ -12,8 +12,8 @@ resource "kubernetes_limit_range" "frontend" {
                memory = "24Mi"
             }
             max {
-                cpu = "2"
-                memory = "1.4Gi"
+                cpu = "1"
+                memory = "520Mi"
             }
         }
         limit {
@@ -37,8 +37,8 @@ resource "kubernetes_limit_range" "frontend" {
               memory = "24Mi"
             }
             max {
-              cpu = "2"
-              memory = "1.4Gi"
+              cpu = "1"
+              memory = "520Mi"
             }
         }
     }

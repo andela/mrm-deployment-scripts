@@ -42,4 +42,4 @@ resource "kubernetes_limit_range" "backend" {
             }
         }
     }
-}        
+}

@@ -7,6 +7,7 @@ data "template_file" "ingress" {
     frontend_domain_name      = "${var.frontend_domain_name}"
     backend_domain_name       = "${var.backend_domain_name}"
     microservice_domain_name  = "${var.microservice_domain_name}"
+    slack_microservice_domain_name  = "${var.slack_microservice_domain_name}"
   }
 }
 
