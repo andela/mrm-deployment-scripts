@@ -21,10 +21,11 @@ resource "google_container_node_pool" "converge_node_pool" {
 
   management {
     auto_upgrade = true
+    auto_repair  = true
   }
 
   node_config {
-    machine_type = "g1-small"
+    machine_type = "n1-standard-1"
     metadata = {
       disable-legacy-endpoints = "true"
     }
