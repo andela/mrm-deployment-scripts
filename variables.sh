@@ -3,7 +3,7 @@ create_variables (){
     VARIABLES+=(
     project
     region
-    zone 
+    zone
     environment
     prefix
     credentials
@@ -28,6 +28,11 @@ create_variables (){
     microservice_container_port
     microservice_domain_name
     microservice_namespace
+    slack_microservice_name
+    slack_microservice_image
+    slack_microservice_container_port
+    slack_microservice_domain_name
+    slack_microservice_namespace
     )
 }
 create_variables
