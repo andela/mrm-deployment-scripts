@@ -55,9 +55,17 @@ spec:
         backend:
           serviceName: push-microservice
           servicePort: http
+  - host: ${slack_microservice_domain_name}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: slack-microservice
+          servicePort: http
   tls:
     - hosts:
       - ${frontend_domain_name}
       - ${backend_domain_name}
       - ${microservice_domain_name}
+      - ${slack_microservice_domain_name}
       secretName: converge-tls-secret
