@@ -86,7 +86,7 @@ if [ "$CIRCLE_BRANCH" == master ]; then
     export PRODUCTION_FRONTEND_IMAGE=$PRODUCTION_FRONTEND_IMAGE:$frontend_version
     push_service_version=$( gsutil cp gs://$PRODUCTION_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export PRODUCTION_MICROSERVICE_IMAGE=$PRODUCTION_MICROSERVICE_IMAGE:$push_service_version
-    slack_service_version=$( gsutil cp gs://$PRODUCTION_SLACK_MICROSERVICE_IMAGE_VERSION_PATH . && cat working_image )
+    slack_service_version=$( gsutil cp gs://$PRODUCTION_SLACK_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export PRODUCTION_SLACK_MICROSERVICE_IMAGE=$PRODUCTION_SLACK_MICROSERVICE_IMAGE:$slack_service_version
     printenv | grep PRODUCTION_ | sed "s/^PRODUCTION_\(.*\)=/\L&/" | sed "s/production_//" > values.sh
 elif [ "$CIRCLE_BRANCH" == develop ]; then
@@ -96,7 +96,7 @@ elif [ "$CIRCLE_BRANCH" == develop ]; then
     export STAGING_FRONTEND_IMAGE=$STAGING_FRONTEND_IMAGE:$frontend_version
     push_service_version=$( gsutil cp gs://$STAGING_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export STAGING_MICROSERVICE_IMAGE=$STAGING_MICROSERVICE_IMAGE:$push_service_version
-    slack_service_version=$( gsutil cp gs://$STAGING_SLACK_MICROSERVICE_IMAGE_VERSION_PATH . && cat working_image )
+    slack_service_version=$( gsutil cp gs://$STAGING_SLACK_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export STAGING_SLACK_MICROSERVICE_IMAGE=$STAGING_SLACK_MICROSERVICE_IMAGE:$slack_service_version
     printenv | grep STAGING_ | sed "s/^STAGING_\(.*\)=/\L&/" | sed "s/staging_//" > values.sh
 else
@@ -106,7 +106,7 @@ else
     export SANDBOX_FRONTEND_IMAGE=$SANDBOX_FRONTEND_IMAGE:$frontend_version
     push_service_version=$( gsutil cp gs://$SANDBOX_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export SANDBOX_MICROSERVICE_IMAGE=$SANDBOX_MICROSERVICE_IMAGE:$push_service_version
-    slack_service_version=$( gsutil cp gs://$SANDBOX_SLACK_MICROSERVICE_IMAGE_VERSION_PATH . && cat working_image )
+    slack_service_version=$( gsutil cp gs://$SANDBOX_SLACK_MICROSERVICE_IMAGE_VERSION_PATH/current_version . && cat current_version )
     export SANDBOX_SLACK_MICROSERVICE_IMAGE=$SANDBOX_SLACK_MICROSERVICE_IMAGE:$slack_service_version
     printenv | grep SANDBOX_ | sed "s/^SANDBOX_\(.*\)=/\L&/" | sed "s/sandbox_//" > values.sh
 fi
